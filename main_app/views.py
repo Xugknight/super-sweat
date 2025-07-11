@@ -7,3 +7,6 @@ from django.http import HttpResponse
 def home(request):
     # Send a simple HTML response
     return HttpResponse('<h1>Super Sweat</h1>')
+
+def about(request):
+    return render(request, 'about.html')

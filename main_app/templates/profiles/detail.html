@@ -1,0 +1,22 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/profiles/profile-detail.css' %}" />
+{% endblock %} 
+{% block content %}
+<section class="profile-container">
+  <div class="profile-img">
+    <img src="{% static 'images/sk8r-boi-profile.svg' %}" alt="A skater boy profile" />
+  </div>
+  <div class="profile-details">
+    <h1>{{ profile.name }}</h1>
+    <p>{{ profile.description }}</p>
+    <div class="profile-actions">
+      <a href="{% url 'profile-update' profile.id %}" class="btn warn">Edit</a>
+      <a href="{% url 'profile-delete' profile.id %}" class="btn danger">Delete</a>
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}

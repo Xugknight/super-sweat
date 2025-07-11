@@ -10,7 +10,6 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   display_name = models.CharField(max_length=100)
-  # avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
   rank = models.CharField(max_length=50, blank=True)
   main_game = models.CharField(max_length=100, blank=True)
   preferred_roles = models.CharField(max_length=100, blank=True)
@@ -23,6 +22,10 @@ class Profile(models.Model):
       ],
       default='ACTIVE'
   )
+  steam_id = models.CharField(max_length=50, blank=True, help_text="Your 64-bit SteamID")
+  steam_profile = models.URLField(blank=True, help_text="Full Steam Community URL")
+  discord_tag = models.CharField(max_length=32, blank=True, help_text="e.g. User#1234")
+  twitch_channel = models.URLField(blank=True)
   created_at = models.DateTimeField(default=timezone.now, editable=False)
   updated_at = models.DateTimeField(auto_now=True)
 
@@ -129,3 +132,27 @@ class RSVP(models.Model):
 
     def __str__(self):
         return f"{self.profile} → {self.event}: {self.response}"
+    
+class ExternalAccount(models.Model):
+    SERVICE_CHOICES = [
+        ('STEAM',   'Steam'),
+        ('DISCORD', 'Discord'),
+        ('TWITCH',  'Twitch'),
+        ('OTHER',   'Other'),
+    ]
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='external_accounts')
+    service = models.CharField(max_length=10, choices=SERVICE_CHOICES)
+    identifier = models.CharField(
+        max_length=100,
+        help_text="Could be a username, ID, or full URL"
+    )
+    url = models.URLField(
+        blank=True,
+        help_text="Full profile link (if applicable)"
+    )
+
+    class Meta:
+        unique_together = ('profile','service','identifier')
+
+    def __str__(self):
+        return f"{self.profile.display_name} on {self.get_service_display()}"

@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Profile(models.Model):
-  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  user = models.OneToOneField(User, on_delete=models.CASCADE)
   display_name = models.CharField(max_length=100)
   rank = models.CharField(max_length=50, blank=True)
   main_game = models.CharField(max_length=100, blank=True)
@@ -42,7 +42,7 @@ class Guild(models.Model):
   def __str__(self):
       return self.name
   
-  class Membership(models.Model):
+class Membership(models.Model):
     ROLE_CHOICES = [
         ('LEADER','Guild Leader'),
         ('OFFICER','Officer'),
@@ -63,7 +63,7 @@ class Guild(models.Model):
     def __str__(self):
         return f"{self.profile} in {self.guild} as {self.role}"
 
-Guild.add_to_class('members', models.ManyToManyField(
+    Guild.add_to_class('members', models.ManyToManyField(
     Profile,
     through='Membership',
     related_name='guilds'

@@ -81,12 +81,12 @@ WSGI_APPLICATION = 'super_sweat.wsgi.application'
 
 DATABASES = {
     'default': {
-     'ENGINE': 'django.db.backends.postgresql',
-      'NAME': 'super-sweat',
-      'USER': os.environ['DB_USER'],
-      'PASSWORD': os.environ['DB_PW'],
-      'HOST': os.environ['DB_HOST'],
-      'PORT': '5432',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'super-sweat',
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PW'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': '5432',
     }
 }
 
@@ -131,3 +131,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = 'home'
+
+LOGIN_REDIRECT_URL = 'home'
+
+LOGOUT_REDIRECT_URL = 'home'

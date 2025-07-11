@@ -23,13 +23,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family:"Black Ops One" -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   min-height: 100vh;
-  --nav-bg: rgba(104, 197, 248, 0.7);
-  --nav-bg-ff: rgba(104, 197, 248, 0.9);
-  --borders: rgb(36, 116, 248) solid 2px;
+  --nav-bg: #9f2b1d;
+  --nav-bg-ff: #9f2b1d;
+  --borders: rgb(0, 2, 5) solid 2px;
   --text-color: rgb(17, 20, 17);
   --link-hover-color: rgb(16, 56, 158);
   --button-bg: rgb(245, 245, 245);
@@ -95,9 +95,19 @@ nav li {
 }
 
 .header-logo-container {
-  margin: auto;
-  padding: 10px 20px 0;
-  max-width: 500px;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin: 0;
+  padding: 0;
+  opacity: 1;
+  /* Remove the fixed positioning - let it flow naturally in the header */
+}
+.header-logo-container img {
+  width: 100%;
+  height: auto; /* Maintains aspect ratio */
+  max-width: 40px;
+  max-height: 40px;
 }
 
 .page-header {

@@ -1,6 +1,6 @@
 import requests
 from django.contrib.auth.views import LoginView
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
@@ -33,6 +33,37 @@ class ProfileUpdate(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return Profile.objects.get(user=self.request.user)
+    
+class ProfileDelete(LoginRequiredMixin, DeleteView):
+    model = Profile
+    template_name = 'profiles/confirm_delete.html'
+    success_url = reverse_lazy('home')
+
+    def get_object(self, queryset = None):
+        return Profile.objects.get(user=self.request.user)
+    
+    def delete(self, request, *args, **kwargs):
+        profile = self.get_object()
+        user = profile.user
+        logout(request)
+        profile.delete()
+        user.delete()
+        return super().delete(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        # Get the current user's profile and user object
+        profile = self.get_object()
+        user = request.user
+        
+        # Log the user out before deletion
+        logout(request)
+
+        # Delete the profile and user
+        profile.delete()
+        user.delete()
+        return redirect(self.success_url)
+
+        
 
 def guild_index(request, guild_id):
     guild = Guild.objects.get(id=guild_id)
@@ -43,15 +74,14 @@ def guild_detail(request, guild_id):
     return render(request, 'detail.html', {'guild': guild})
 
 def signup(request):
-    error_message = ''
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            Profile.objects.create(user=user, display_name=user.username)
             login(request, user)
-            return redirect('home')
-        else:
-            error_message = 'Invalid sign up - try again'
-    form = UserCreationForm()
-    context = {'form': form, 'error-message': error_message}
-    return render(request, 'signup.html', context)
+            return redirect('profile-detail')  
+    else:
+        form = UserCreationForm()
+    
+    return render(request, 'signup.html', {'form': form})

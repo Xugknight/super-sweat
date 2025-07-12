@@ -6,6 +6,7 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('profiles/', views.ProfileDetail.as_view(), name='profile-detail'),
     path('profiles/edit/', views.ProfileUpdate.as_view(), name='profile-edit'),
+    path('profiles/delete/', views.ProfileDelete.as_view(), name='profile-delete'),
     path('accounts/signup/', views.signup, name='signup'),
     path('guilds/', views.guild_index, name='guild-index'),
     path('guilds/', views.guild_detail, name='guild-detail'),

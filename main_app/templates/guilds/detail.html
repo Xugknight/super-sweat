@@ -1,130 +1,83 @@
-{% extends 'base.html' %} {% block content %}
-<div class="guild-detail">
-  <h1 class="text-3xl font-bold mb-2">{{ guild.name }}</h1>
-  {% if guild.description %}
-  <p class="mb-4">{{ guild.description }}</p>
-  {% endif %}
+{% extends 'base.html' %}
 
-  <p class="text-sm text-gray-600 mb-6">
-    Owned by <strong>{{ guild.owner.display_name }}</strong>
-    &middot; Created on {{ guild.created_at|date:"M d, Y" }}
-  </p>
+{% block content %}
+  <div class="guild-detail">
 
-  {# ————— Members Section ————— #}
-  <section class="mb-8">
-    <h2 class="text-2xl font-semibold mb-2">
-      Members ({{ guild.members.count }})
-    </h2>
-    <ul class="list-disc list-inside">
-      {% for membership in guild.membership_set.all %}
-      <li>
-        {{ membership.profile.display_name }}
-        <small class="italic">({{ membership.get_role_display }})</small>
-        {% if membership.joined_at %}
-        <span class="text-xs text-gray-500"
-          >joined {{ membership.joined_at|date:"M d, Y" }}</span
-        >
-        {% endif %}
-      </li>
-      {% empty %}
-      <li>No members have joined this guild yet.</li>
-      {% endfor %}
-    </ul>
+    <h1 class="text-3xl font-bold mb-2">{{ guild.name }}</h1>
 
-    {# e.g. a button to invite or join #} {% if user.is_authenticated and
-    user.profile != guild.owner %}
-    <form action="{% url 'guild-join' guild.pk %}" method="post" class="mt-4">
-      {% csrf_token %}
-      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">
-        Join Guild
-      </button>
-    </form>
+    {% if guild.description %}
+      <p class="mb-4">{{ guild.description }}</p>
     {% endif %}
-  </section>
 
-  {# ————— Event Templates Section ————— #}
-  <section class="mb-8">
-    <h2 class="text-2xl font-semibold mb-2">Event Templates</h2>
-    <ul class="list-disc list-inside">
-      {% for template in guild.templates.all %}
-      <li>
-        <a
-          href="{% url 'eventtemplate-detail' template.pk %}"
-          class="text-blue-600 hover:underline"
-        >
-          {{ template.name }}
+    <p class="text-sm text-gray-600 mb-6">
+      Owned by <strong>{{ guild.owner.display_name }}</strong>
+      &middot; Created on {{ guild.created_at|date:"M d, Y" }}
+    </p>
+
+    {# — Members Section — #}
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold mb-2">
+        Members ({{ guild.members.count }})
+      </h2>
+      <ul class="list-disc list-inside">
+        {% for membership in guild.membership_set.all %}
+          <li>
+            {{ membership.profile.display_name }}
+            <small class="italic">({{ membership.get_role_display }})</small>
+
+            {% if membership.joined_at %}
+              <span class="text-xs text-gray-500">
+                joined {{ membership.joined_at|date:"M d, Y" }}
+              </span>
+            {% endif %}
+          </li>
+        {% empty %}
+          <li>No members have joined this guild yet.</li>
+        {% endfor %}
+      </ul>
+
+      {% if user.is_authenticated and user.profile != guild.owner %}
+        <form action="{% url 'guild-join' guild.pk %}"
+              method="post"
+              class="mt-4">
+          {% csrf_token %}
+          <button type="submit"
+                  class="btn submit">
+            Join Guild
+          </button>
+        </form>
+      {% endif %}
+    </section>
+
+    {# — Event Templates Section — #}
+    <section class="mb-8">
+      … your event-templates loop …
+    </section>
+
+    {# — Upcoming Events Section — #}
+    <section class="mb-8">
+      … your upcoming-events loop …
+    </section>
+
+    {# — Owner Actions — #}
+    {% if user.is_authenticated and user.profile == guild.owner %}
+      <hr class="my-6" />
+      <div class="flex space-x-4">
+        <a href="{% url 'guild-update' guild.pk %}"
+           class="px-4 py-2 bg-green-600 text-white rounded">
+          Edit Guild
         </a>
-        {% if template.default_time %}
-        <small>— {{ template.default_time }}</small>
-        {% endif %}
-      </li>
-      {% empty %}
-      <li>No event templates defined.</li>
-      {% endfor %}
-    </ul>
-    <a
-      href="{% url 'eventtemplate-create' guild.pk %}"
-      class="mt-2 inline-block text-sm text-blue-500 hover:underline"
-    >
-      + Create new template
-    </a>
-  </section>
+        <form action="{% url 'guild-delete' guild.pk %}"
+              method="post"
+              onsubmit="return confirm('Really delete this guild?');">
+          {% csrf_token %}
+          <button type="submit"
+                  class="px-4 py-2 bg-red-600 text-white rounded">
+            Delete Guild
+          </button>
+        </form>
+      </div>
+    {% endif %}
 
-  {# ————— Upcoming Events Section ————— #}
-  <section class="mb-8">
-    <h2 class="text-2xl font-semibold mb-2">Upcoming Events</h2>
-    <ul class="divide-y divide-gray-200">
-      {% for event in guild.events.filter(start_time__gte=now) %}
-      <li class="py-2 flex justify-between items-center">
-        <div>
-          <a
-            href="{% url 'event-detail' event.pk %}"
-            class="text-lg font-medium text-blue-600 hover:underline"
-          >
-            {{ event.title }}
-          </a>
-          <div class="text-sm text-gray-600">
-            {{ event.start_time|date:"M d, Y H:i" }} – {{
-            event.end_time|date:"H:i" }}
-          </div>
-        </div>
-        <span class="text-sm px-2 py-1 bg-gray-100 rounded">
-          {{ event.rsvps.count }} RSVPs
-        </span>
-      </li>
-      {% empty %}
-      <li class="py-2 text-gray-500">No upcoming events.</li>
-      {% endfor %}
-    </ul>
-    <a
-      href="{% url 'event-create' guild.pk %}"
-      class="mt-2 inline-block text-sm text-blue-500 hover:underline"
-    >
-      + Schedule an event
-    </a>
-  </section>
-
-  {# ————— Edit / Delete Actions (only for owner) ————— #} {% if
-  user.is_authenticated and user.profile == guild.owner %}
-  <hr class="my-6" />
-  <div class="flex space-x-4">
-    <a
-      href="{% url 'guild-update' guild.pk %}"
-      class="px-4 py-2 bg-green-600 text-white rounded"
-    >
-      Edit Guild
-    </a>
-    <form
-      action="{% url 'guild-delete' guild.pk %}"
-      method="post"
-      onsubmit="return confirm('Really delete this guild?');"
-    >
-      {% csrf_token %}
-      <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded">
-        Delete Guild
-      </button>
-    </form>
   </div>
-  {% endif %}
-</div>
 {% endblock %}

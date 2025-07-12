@@ -1,22 +1,33 @@
-{% extends 'base.html' %} 
-{% load static %} 
-{% block head %}
-<link rel="stylesheet" href="{% static 'css/profiles/profile-detail.css' %}" />
-{% endblock %} 
-{% block content %}
-<section class="profile-container">
-  <div class="profile-img">
-    <img src="" alt="" />
-  </div>
-  <div class="profile-details">
-    <h1>{{ profile.name }}</h1>
-    <p>{{ profile.description }}</p>
-    <div class="profile-actions">
-      <a href="{% url 'profile-update' profile.id %}" class="btn warn">Edit</a>
-      <a href="{% url 'profile-delete' profile.id %}" class="btn danger">Delete</a>
-    </div>
-  </div>
-</section>
+{% extends 'base.html' %} {% block title %}My Profile{% endblock %} {% block
+content %}
+<h1>{{ object.display_name }}</h1>
+<p><strong>Username:</strong> {{ object.user.username }}</p>
+<p><strong>Rank:</strong> {{ object.rank|default:"n/a" }}</p>
+<p><strong>Main Game:</strong> {{ object.main_game|default:"n/a" }}</p>
+<p>
+  <strong>Preferred Roles:</strong> {{ object.preferred_roles|default:"n/a" }}
+</p>
 
+{% if object.avatar %}
+<img src="{{ object.avatar.url }}" alt="Avatar" width="150" />
+{% endif %}
 
+<ul>
+  {% if object.steam_profile %}
+  <li>
+    <strong>Steam:</strong>
+    <a href="{{ object.steam_profile }}" target="_blank">View Profile</a>
+  </li>
+  {% endif %} {% if object.discord_tag %}
+  <li><strong>Discord:</strong> {{ object.discord_tag }}</li>
+  {% endif %} {% if object.twitch_channel %}
+  <li>
+    <strong>Twitch:</strong>
+    <a href="{{ object.twitch_channel }}" target="_blank">Channel</a>
+  </li>
+  {% endif %}
+  <li><strong>Status:</strong> {{ object.get_status_display }}</li>
+</ul>
+
+<p><a href="{% url 'profile-edit' %}">Edit Profile</a></p>
 {% endblock %}

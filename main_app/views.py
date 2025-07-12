@@ -18,13 +18,20 @@ class Home(LoginView):
 def about(request):
     return render(request, 'about.html')
 
-def profile_detail(request, profile_id):
-    profile = Profile.objects.get(id=profile_id)
-    return render(request, 'detail.html', {'profile': profile})
+class ProfileDetail(LoginRequiredMixin, DetailView):
+    model = Profile
+    template_name = 'profiles/detail.html'
+
+    def get_object(self):
+        return Profile.objects.get(user=self.request.user)
 
 def guild_index(request, guild_id):
     guild = Guild.objects.get(id=guild_id)
     return render (request, 'index.html', {'guild': guild})
+
+def guild_detail(request, guild_id):
+    guild = Guild.objects.get(id=guild_id)
+    return render(request, 'detail.html', {'guild': guild})
 
 def signup(request):
     error_message = ''

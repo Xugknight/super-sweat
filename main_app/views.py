@@ -65,13 +65,15 @@ class ProfileDelete(LoginRequiredMixin, DeleteView):
 
         
 
-def guild_index(request, guild_id):
-    guild = Guild.objects.get(id=guild_id)
-    return render (request, 'index.html', {'guild': guild})
+class GuildList(LoginRequiredMixin, ListView):
+    model = Guild
+    template_name = 'guilds/index.html'
+    context_object_name = 'guilds'
 
-def guild_detail(request, guild_id):
-    guild = Guild.objects.get(id=guild_id)
-    return render(request, 'detail.html', {'guild': guild})
+class GuildDetail(LoginRequiredMixin, DetailView):
+    model = Guild
+    template_name = 'guilds/detail.html'
+    context_object_name = 'guild'
 
 def signup(request):
     if request.method == 'POST':

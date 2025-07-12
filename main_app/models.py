@@ -42,6 +42,15 @@ class Guild(models.Model):
   def __str__(self):
       return self.name
   
+  def get_absolute_url(self):
+        return reverse('guild-detail', kwargs={'pk': self.pk})
+  
+  class Meta:
+      ordering = ['name']
+      indexes = [
+          models.Index(fields=['name']),
+      ]
+  
 class Membership(models.Model):
     ROLE_CHOICES = [
         ('LEADER','Guild Leader'),
@@ -156,3 +165,13 @@ class ExternalAccount(models.Model):
 
     def __str__(self):
         return f"{self.profile.display_name} on {self.get_service_display()}"
+    
+class Role(models.Model):
+    name = models.CharField(max_length=20, unique=True)
+
+class ProfileRole(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    role    = models.ForeignKey(Role, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('profile','role')

@@ -31,6 +31,6 @@
     <li><strong>Status:</strong> {{ object.get_status_display }}</li>
   </ul>
 
-  <p><a href="{% url 'profile-edit' %}">Edit Profile</a></p>
+  <p><a href="{% url 'profile-edit' %}" class="btn warn">Edit Profile</a></p>
   <a href="{% url 'profile-delete' %}" class="btn danger">Delete Profile</a>
 {% endblock %}

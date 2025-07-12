@@ -4,14 +4,14 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.utils import timezone
+from django.views.generic import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
-from .models import Profile, Guild
+from .models import Profile, Guild, Membership
 from .forms import ProfileForm
 
-# Define the home view function
 class Home(LoginView):
     template_name = 'home.html'
 
@@ -51,19 +51,14 @@ class ProfileDelete(LoginRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
-        # Get the current user's profile and user object
         profile = self.get_object()
         user = request.user
         
-        # Log the user out before deletion
         logout(request)
 
-        # Delete the profile and user
         profile.delete()
         user.delete()
         return redirect(self.success_url)
-
-        
 
 class GuildList(LoginRequiredMixin, ListView):
     model = Guild
@@ -74,6 +69,38 @@ class GuildDetail(LoginRequiredMixin, DetailView):
     model = Guild
     template_name = 'guilds/detail.html'
     context_object_name = 'guild'
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['now'] = timezone.now()
+        return data
+
+class GuildCreate(LoginRequiredMixin, CreateView):
+    model = Guild
+    fields = ['name', 'description']
+    template_name = 'guilds/form.html'
+    success_url = reverse_lazy('guild-list')
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user.profile
+        return super().form_valid(form)
+    
+class GuildUpdate(LoginRequiredMixin, UpdateView):
+    model = Guild
+    fields = ['name', 'description']
+    template_name = 'guilds/form.html'
+    success_url = reverse_lazy('guild-list')
+
+    def get_queryset(self):
+        return Guild.objects.filter(owner=self.request.user.profile)
+    
+class GuildDelete(LoginRequiredMixin, DeleteView):
+    model = Guild
+    template_name = 'guilds/confirm_delete.html'
+    success_url = reverse_lazy('guild-list')
+
+    def get_queryset(self):
+        return Guild.objects.filter(owner=self.request.user.profile)
 
 def signup(request):
     if request.method == 'POST':
@@ -87,3 +114,16 @@ def signup(request):
         form = UserCreationForm()
     
     return render(request, 'signup.html', {'form': form})
+
+@login_required
+def guild_join(request, pk):
+    if request.method == 'POST':
+        guild = get_object_or_404(Guild, pk=pk)
+        profile = request.user.profile
+
+        Membership.objects.get_or_create(
+            guild=guild,
+            profile=profile,
+            defaults={'role': 'MEMBER'}
+        )
+    return redirect('guild-detail', pk=pk)

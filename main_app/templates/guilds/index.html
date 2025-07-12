@@ -1,16 +1,19 @@
-{% extends 'base.html' %} {% block title %}All Guilds{% endblock %} {% block
-content %}
-<h1>All Guilds</h1>
-<ul>
-  {% for guild in guilds %}
-  <li>
-    <a href="{% url 'guild-detail' guild.pk %}"> {{ guild.name }} </a>
-  </li>
-  {% empty %}
-  <li>No guilds found.</li>
-  {% endfor %}
-</ul>
-<p>
-  <a href="{% url 'guild-create' %}">+ Create New Guild</a>
-</p>
+{% extends 'base.html' %}
+{% block title %}All Guilds{% endblock %}
+{% block content %}
+  <h1>All Guilds</h1>
+  <ul>
+    {% for guild in guilds %}
+      <li>
+        <a href="{% url 'guild-detail' guild.pk %}">
+          {{ guild.name }}
+        </a>
+      </li>
+    {% empty %}
+      <li>No guilds found.</li>
+    {% endfor %}
+  </ul>
+  <p>
+    <a href="{% url 'guild-create' %}">+ Create New Guild</a>
+  </p>
 {% endblock %}

@@ -5,11 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from .models import Profile, Guild
-# Import HttpResponse to send text-based responses
-
+from .forms import ProfileForm
 
 # Define the home view function
 class Home(LoginView):
@@ -21,6 +21,15 @@ def about(request):
 class ProfileDetail(LoginRequiredMixin, DetailView):
     model = Profile
     template_name = 'profiles/detail.html'
+
+    def get_object(self):
+        return Profile.objects.get(user=self.request.user)
+
+class ProfileUpdate(LoginRequiredMixin, UpdateView):
+    model = Profile
+    form_class = ProfileForm
+    template_name = 'profiles/form.html'
+    success_url = reverse_lazy('profile-detail')
 
     def get_object(self):
         return Profile.objects.get(user=self.request.user)

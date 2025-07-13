@@ -1,16 +1,15 @@
 {% extends 'base.html' %}
-{% block title %}
-  {% if object %}Edit Guild{% else %}Create Guild{% endif %}
-{% endblock %}
+{% block title %}{% if object %}Edit Guild{% else %}Create Guild{% endif %}{% endblock %}
 
 {% block content %}
   <h1>{% if object %}Edit{% else %}New{% endif %} Guild</h1>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">
+
+    <button type="submit" class="btn submit">
       {% if object %}Save Changes{% else %}Create Guild{% endif %}
     </button>
+    <a href="{% url 'guild-list' %}" class="btn secondary">Cancel</a>
   </form>
-  <p><a href="{% url 'guild-list' %}">← Back to all guilds</a></p>
 {% endblock %}

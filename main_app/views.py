@@ -9,7 +9,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
-from .models import Profile, Guild, Membership
+from .models import Profile, Guild, Membership, EventTemplate, Event
 from .forms import ProfileForm
 
 class Home(LoginView):
@@ -72,7 +72,8 @@ class GuildDetail(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-        data['now'] = timezone.now()
+        now = timezone.now()
+        data['upcoming_events'] = self.object.events.filter(start_time__gte=now)
         return data
 
 class GuildCreate(LoginRequiredMixin, CreateView):
@@ -101,6 +102,44 @@ class GuildDelete(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return Guild.objects.filter(owner=self.request.user.profile)
+    
+class EventTemplateCreate(LoginRequiredMixin, CreateView):
+    model = EventTemplate
+    fields = ['name', 'default_time', 'default_roles']
+    template_name = 'guilds/eventtemplate_form.html'
+
+    def form_valid(self, form):
+        form.instance.guild = Guild.objects.get(pk=self.kwargs['pk'])
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['guild'] = Guild.objects.get(pk=self.kwargs['pk'])
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('guild-detail', kwargs={'pk': self.kwargs['pk']})
+    
+class EventCreate(LoginRequiredMixin, CreateView):
+    model = Event
+    fields = [
+        'title', 'description',
+        'start_time', 'end_time',
+        'max_participants', 'required_roles',
+    ]
+    template_name = 'guilds/event_form.html'
+
+    def form_valid(self, form):
+        form.instance.guild = Guild.objects.get(pk=self.kwargs['pk'])
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['guild'] = Guild.objects.get(pk=self.kwargs['pk'])
+        return ctx
+
+    def get_success_url(self):
+        return reverse_lazy('guild-detail', kwargs={'pk': self.kwargs['pk']})
 
 def signup(request):
     if request.method == 'POST':
@@ -126,4 +165,13 @@ def guild_join(request, pk):
             profile=profile,
             defaults={'role': 'MEMBER'}
         )
+    return redirect('guild-detail', pk=pk)
+
+@login_required
+def guild_leave(request, pk):
+    if request.method == 'POST':
+        guild = get_object_or_404(Guild, pk=pk)
+        profile = request.user.profile
+
+        Membership.objects.filter(guild=guild, profile=profile).delete()
     return redirect('guild-detail', pk=pk)

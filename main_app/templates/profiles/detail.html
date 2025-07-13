@@ -12,25 +12,26 @@
     <img src="{{ object.avatar.url }}" alt="Avatar" width="150">
   {% endif %}
 
+  <h2>Linked Accounts</h2>
   <ul>
-    {% if object.steam_profile %}
+    {% for acct in object.external_accounts.all %}
       <li>
-        <strong>Steam:</strong>
-        <a href="{{ object.steam_profile }}" target="_blank">View Profile</a>
+        <strong>{{ acct.get_service_display }}:</strong>
+        {% if acct.url %}
+          <a href="{{ acct.url }}" target="_blank">{{ acct.identifier }}</a>
+        {% else %}
+          {{ acct.identifier }}
+        {% endif %}
       </li>
-    {% endif %}
-    {% if object.discord_tag %}
-      <li><strong>Discord:</strong> {{ object.discord_tag }}</li>
-    {% endif %}
-    {% if object.twitch_channel %}
-      <li>
-        <strong>Twitch:</strong>
-        <a href="{{ object.twitch_channel }}" target="_blank">Channel</a>
-      </li>
-    {% endif %}
-    <li><strong>Status:</strong> {{ object.get_status_display }}</li>
+    {% empty %}
+      <li><em>No external accounts linked yet.</em></li>
+    {% endfor %}
   </ul>
 
-  <p><a href="{% url 'profile-edit' %}" class="btn warn">Edit Profile</a></p>
-  <a href="{% url 'profile-delete' %}" class="btn danger">Delete Profile</a>
+  <p><strong>Status:</strong> {{ object.get_status_display }}</p>
+
+  <p>
+    <a href="{% url 'profile-edit' %}" class="btn warn">Edit Profile</a>
+    <a href="{% url 'profile-delete' %}" class="btn danger">Delete Profile</a>
+  </p>
 {% endblock %}

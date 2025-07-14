@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/events/form.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Schedule New Event for {{ guild.name }}</h1>
+  </div>
+
+  <form method="post" class="form-container">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="flex space-x-4 mt-4">
+      <button type="submit" class="btn submit">
+        Save Event
+      </button>
+      <a href="{% url 'guild-detail' object.guild.pk %}" class="btn secondary">
+        Cancel
+      </a>
+    </div>
+  </form>
+{% endblock %}

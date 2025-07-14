@@ -163,24 +163,34 @@ class EventUpdate(LoginRequiredMixin, UpdateView):
     form_class = EventCreateForm
     template_name = 'events/form.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        self.event = self.get_object()
+        self.guild = self.event.guild
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['guild'] = self.guild
+        return ctx
+
     def form_valid(self, form):
         event = form.save()
         if form.cleaned_data.get('save_as_template'):
             EventTemplate.objects.update_or_create(
-                guild=event.guild,
+                guild=self.guild,
                 name=event.title,
                 defaults={
                     'default_time': event.end_time - event.start_time,
                     'default_roles': event.required_roles
                 }
             )
-        return redirect('guild-detail', pk=event.guild.pk)
+        return redirect('guild-detail', pk=self.guild.pk)
 
 class EventDelete(LoginRequiredMixin, DeleteView):
     model = Event
     template_name = 'events/confirm_delete.html'
-
-    def delete(self, request, *args, **kwargs):
+    
+    def post(self, request, *args, **kwargs):
         event = self.get_object()
         guild_pk = event.guild.pk
         event.delete()

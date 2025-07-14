@@ -4,7 +4,6 @@
 {% block content %}
   <h1>Create an Account</h1>
 
-  {# Show form-wide (non-field) errors #}
   {% if form.non_field_errors %}
     <ul class="errorlist">
       {% for err in form.non_field_errors %}
@@ -16,7 +15,6 @@
   <form method="post">
     {% csrf_token %}
 
-    {# Loop through fields so we can show per-field errors #}
     {% for field in form %}
       <div class="form-group">
         {{ field.label_tag }}

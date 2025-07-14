@@ -19,6 +19,9 @@ urlpatterns = [
     path('guilds/<int:pk>/delete/', views.GuildDelete.as_view(), name='guild-delete'),
     path('guilds/<int:pk>/join/', views.guild_join, name='guild-join'),
     path('guilds/<int:pk>/leave/', views.guild_leave, name='guild-leave'),
+    path('guilds/<int:pk>/membership/<int:mid>/approve/', views.membership_approve, name='membership-approve'),
+    path('guilds/<int:pk>/membership/<int:mid>/reject/', views.membership_reject, name='membership-reject'),
+    path('guilds/<int:pk>/membership/<int:mid>/role/', views.membership_update_role, name='membership-update-role'),
 
     # Events
     path('guilds/<int:pk>/events/create/', views.EventCreate.as_view(), name='event-create'),

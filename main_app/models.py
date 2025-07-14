@@ -43,6 +43,14 @@ class Guild(models.Model):
         return reverse('guild-detail', kwargs={'pk': self.pk})
 
 class Membership(models.Model):
+    STATUS_PENDING = 'PENDING'
+    STATUS_APPROVED = 'APPROVED'
+    STATUS_REJECTED = 'REJECTED'
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_APPROVED, 'Approved'),
+        (STATUS_REJECTED, 'Rejected')
+    ]
     ROLE_CHOICES = [
         ('LEADER','Guild Leader'),
         ('OFFICER','Officer'),
@@ -52,14 +60,15 @@ class Membership(models.Model):
     ]
     guild = models.ForeignKey(Guild, on_delete=models.CASCADE)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='MEMBER')
-    joined_at = models.DateTimeField(default=timezone.now)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='RECRUIT')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    joined_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('guild','profile')
 
     def __str__(self):
-        return f"{self.profile.display_name} in {self.guild.name} as {self.get_role_display()}"
+        return f"{self.profile.display_name} in {self.guild.name} as {self.get_role_display()} [{self.get_status_display()}]"
 
 class EventTemplate(models.Model):
     guild = models.ForeignKey(Guild, on_delete=models.CASCADE, related_name='templates')

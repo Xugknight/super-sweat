@@ -83,12 +83,16 @@ class GuildDetail(LoginRequiredMixin, DetailView):
         upcoming = self.object.events.filter(start_time__gte=now)
         data['upcoming_events'] = upcoming
         data['has_upcoming'] = upcoming.exists()
-
+        all_memberships = self.object.membership_set.all()
+        data['approved_members'] = all_memberships.filter(status='APPROVED')
+        data['pending_members'] = all_memberships.filter(status='PENDING')
+        data['is_approved'] = data['approved_members'].filter(profile=self.request.user.profile).exists()
+        data['is_pending'] = data['pending_members'].filter(profile=self.request.user.profile).exists()
         profile = self.request.user.profile
         is_owner = (profile == self.object.owner)
-        membership = Membership.objects.filter(guild=self.object, profile=profile).first()
-        is_officer = membership and membership.role in ('LEADER', 'OFFICER')
+        is_officer = all_memberships.filter(profile=profile, role__in=('LEADER', 'OFFICER')).exists()
         data['can_manage_events'] = is_owner or is_officer
+        data['role_choices'] = Membership.ROLE_CHOICES
         return data
 
 class GuildCreate(LoginRequiredMixin, CreateView):
@@ -126,7 +130,7 @@ class GuildDelete(LoginRequiredMixin, DeleteView):
 def guild_join(request, pk):
     if request.method == 'POST':
         guild = get_object_or_404(Guild, pk=pk)
-        Membership.objects.get_or_create(guild=guild, profile=request.user.profile, defaults={'role': 'MEMBER'})
+        membership, created = Membership.objects.update_or_create(guild=guild, profile=request.user.profile, defaults={'status': Membership.STATUS_PENDING})
     return redirect('guild-detail', pk=pk)
 
 @login_required
@@ -135,6 +139,40 @@ def guild_leave(request, pk):
         membership = get_object_or_404(Membership, guild__pk=pk, profile=request.user.profile)
         membership.delete()
     return redirect('guild-detail', pk=pk)
+
+@login_required
+def membership_approve(request, pk, mid):
+    guild = get_object_or_404(Guild, pk=pk)
+    profile = request.user.profile
+    is_owner = profile == guild.owner
+    is_officer = Membership.objects.filter(guild=guild, profile=profile, role='OFFICER').exists()
+    if request.method == 'POST' and (is_owner or is_officer):
+        memb = get_object_or_404(Membership, pk=mid, guild=guild, status=Membership.STATUS_PENDING)
+        memb.status = Membership.STATUS_APPROVED
+        memb.role = 'MEMBER'
+        memb.save()
+    return redirect('guild-detail', pk=pk)
+
+@login_required
+def membership_reject(request, pk, mid):
+    guild = get_object_or_404(Guild, pk=pk)
+    profile = request.user.profile
+    is_owner = profile == guild.owner
+    is_officer = Membership.objects.filter(guild=guild, profile=profile, role='OFFICER').exists()
+    if request.method == 'POST' and (is_owner or is_officer):
+        Membership.objects.filter(pk=mid, guild=guild, status=Membership.STATUS_PENDING).delete()
+    return redirect('guild-detail', pk=pk)
+
+def membership_update_role(request, pk, mid):
+    guild = get_object_or_404(Guild, pk=pk)
+    profile = request.user.profile
+    if request.method == 'POST' and profile == guild.owner:
+        m = get_object_or_404(Membership, pk=mid, guild=guild, status='APPROVED')
+        new_role = request.POST.get('role')
+        if new_role in dict(Membership.ROLE_CHOICES):
+            m.role = new_role
+            m.save()
+        return redirect('guild-detail', pk=pk)
 
 class EventCreate(LoginRequiredMixin, CreateView):
     model = Event

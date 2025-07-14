@@ -182,6 +182,11 @@ class EventCreate(LoginRequiredMixin, CreateView):
     def dispatch(self, request, *args, **kwargs):
         self.guild = get_object_or_404(Guild, pk=kwargs['pk'])
         return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['guild'] = self.guild
+        return ctx
 
     def form_valid(self, form):
         event = form.save(commit=False)

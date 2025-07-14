@@ -14,7 +14,7 @@
     &middot; Created on {{ guild.created_at|date:"M d, Y" }}
   </p>
 
-  {# ————— Members Section ————— #}
+  {# — Members Section — #}
   <section class="mb-8">
     <h2 class="text-2xl font-semibold mb-2">
       Members ({{ guild.members.count }})
@@ -47,7 +47,7 @@
     {% endif %}
   </section>
 
-  {# ————— "New Event" Button ————— #}
+  {# — "Schedule New Event" Button — #}
   <p class="mb-4">
     <a href="{% url 'event-create' guild.pk %}"
        class="px-4 py-2 bg-green-600 text-white rounded">
@@ -55,7 +55,7 @@
     </a>
   </p>
 
-  {# ————— Upcoming Events Section ————— #}
+  {# — Upcoming Events Accordion — #}
   <section class="mb-8">
     <h2 class="text-2xl font-semibold mb-2">Upcoming Events</h2>
 
@@ -85,6 +85,24 @@
                 <p><strong>Roles Needed:</strong> {{ event.required_roles }}</p>
               {% endif %}
               <p><strong>RSVPs:</strong> {{ event.rsvps.count }}</p>
+
+              {% if can_manage_events %}
+                <div class="mt-2 flex space-x-2">
+                  <a href="{% url 'event-update' event.pk %}"
+                     class="px-3 py-1 bg-green-600 text-white rounded">
+                    Edit
+                  </a>
+                  <form action="{% url 'event-delete' event.pk %}"
+                        method="post"
+                        onsubmit="return confirm('Really delete this event?');">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="px-3 py-1 bg-red-600 text-white rounded">
+                      Delete
+                    </button>
+                  </form>
+                </div>
+              {% endif %}
             </div>
           </li>
         {% endfor %}
@@ -99,7 +117,7 @@
     {% endif %}
   </section>
 
-  {# ————— Owner Actions ————— #}
+  {# — Guild Owner Actions — #}
   {% if user.is_authenticated and user.profile == guild.owner %}
     <hr class="my-6" />
     <div class="flex space-x-4">

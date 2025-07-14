@@ -9,10 +9,6 @@ class ProfileForm(forms.ModelForm):
             'rank',
             'main_game',
             'preferred_roles',
-            'steam_id',
-            'steam_profile',
-            'discord_tag',
-            'twitch_channel',
             'status',
         ]
         widgets = {

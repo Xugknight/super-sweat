@@ -5,12 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from .models import Profile, Guild, Membership, EventTemplate, Event
-from .forms import ProfileForm
+from .forms import ProfileForm, EventCreateForm
 
 class Home(LoginView):
     template_name = 'home.html'
@@ -73,7 +73,9 @@ class GuildDetail(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         now = timezone.now()
-        data['upcoming_events'] = self.object.events.filter(start_time__gte=now)
+        upcoming = self.object.events.filter(start_time__gte=now)
+        data['upcoming_events'] = upcoming
+        data['has_upcoming'] = upcoming.exists()
         return data
 
 class GuildCreate(LoginRequiredMixin, CreateView):
@@ -122,24 +124,33 @@ class EventTemplateCreate(LoginRequiredMixin, CreateView):
     
 class EventCreate(LoginRequiredMixin, CreateView):
     model = Event
-    fields = [
-        'title', 'description',
-        'start_time', 'end_time',
-        'max_participants', 'required_roles',
-    ]
+    form_class = EventCreateForm
     template_name = 'guilds/event_form.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        self.guild = Guild.objects.get(pk=kwargs['pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_initial(self):
+        last = self.guild.events.order_by('-start_time').first()
+        if last: return { 'required_roles': last.required_roles, 'max_participants': last.max_participants, 'description': last.description, } 
+        return {}
+    
     def form_valid(self, form):
-        form.instance.guild = Guild.objects.get(pk=self.kwargs['pk'])
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['guild'] = Guild.objects.get(pk=self.kwargs['pk'])
-        return ctx
-
-    def get_success_url(self):
-        return reverse_lazy('guild-detail', kwargs={'pk': self.kwargs['pk']})
+        event = form.save(commit= False)
+        event.guild = self.guild
+        event.save()
+        if form.cleaned_data.get('save_as_template'):
+            EventTemplate.objects.create(
+                guild = self.guild, 
+                name = event.title,
+                default_time = event.end_time - event.start_time,
+                default_roles = event.required_roles,
+            )
+            return redirect('guild-detail', pk=self.guild.pk)
+        
+    
+  
 
 def signup(request):
     if request.method == 'POST':

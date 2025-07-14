@@ -1,13 +1,33 @@
 {% extends 'base.html' %}
-
-{% block title %}Schedule Event for {{ guild.name }}{% endblock %}
-
 {% block content %}
-  <h1>Schedule Event for {{ guild.name }}</h1>
+  <h1>New Event for {{ view.guild.name }}</h1>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn submit">Create Event</button>
-    <a href="{% url 'guild-detail' guild.pk %}" class="btn secondary">Cancel</a>
+    {{ form.non_field_errors }}
+
+    <div>
+      {{ form.title.label_tag }}<br>{{ form.title }}{{ form.title.errors }}
+    </div>
+    <div>
+      {{ form.description.label_tag }}<br>{{ form.description }}{{ form.description.errors }}
+    </div>
+    <div>
+      {{ form.start_time.label_tag }}<br>{{ form.start_time }}{{ form.start_time.errors }}
+    </div>
+    <div>
+      {{ form.end_time.label_tag }}<br>{{ form.end_time }}{{ form.end_time.errors }}
+    </div>
+    <div>
+      {{ form.required_roles.label_tag }}<br>{{ form.required_roles }}
+    </div>
+    <div>
+      {{ form.max_participants.label_tag }}<br>{{ form.max_participants }}
+    </div>
+    <div>
+      {{ form.save_as_template }} {{ form.save_as_template.label_tag }}
+    </div>
+
+    <button type="submit">Create Event</button>
   </form>
+  <p><a href="{% url 'guild-detail' view.guild.pk %}">← Back to {{ view.guild.name }}</a></p>
 {% endblock %}

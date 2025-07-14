@@ -76,6 +76,11 @@ class GuildDetail(LoginRequiredMixin, DetailView):
         upcoming = self.object.events.filter(start_time__gte=now)
         data['upcoming_events'] = upcoming
         data['has_upcoming'] = upcoming.exists()
+        user_profile = self.request.user.profile
+        is_owner = (user_profile == self.object.owner)
+        membership = Membership.objects.filter(guild=self.object, profile=user_profile).first()
+        is_officer = (membership and membership.role in ('LEADER', 'OFFICER'))
+        data['can_manage_events'] = is_owner or is_officer
         return data
 
 class GuildCreate(LoginRequiredMixin, CreateView):
@@ -149,8 +154,46 @@ class EventCreate(LoginRequiredMixin, CreateView):
             )
             return redirect('guild-detail', pk=self.guild.pk)
         
+class EventUpdate(LoginRequiredMixin, UpdateView):
+    model = Event
+    form_class = EventCreateForm
+    template_name = 'guilds/event_form.html'
     
-  
+    def dispatch(self, request, *args, **kwargs):
+        self.event = self.get_object()
+        if request.user.profile not in [self.event.guild.owner] and \
+        self.event.guild.membership_set.get(profile=request.user.profile).role not in ('OFFICER', 'LEADER'):
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+    
+    def form_valid(self, form):
+        event = form.save()
+        if form.cleaned_data.get('save_as_template'):
+            EventTemplate.objects.update_or_create(
+                guild = self.event.guild, 
+                name = event.title,
+                defaults = {
+                    'default_time': event.end_time - event.start_time,
+                    'default_roles': event.required_roles
+                    }
+            )
+        return redirect('guild-detail', pk=event.guild.pk)
+    
+class EventDelete(LoginRequiredMixin, DeleteView):
+    model = Event
+    template_name = 'guilds/event_form.html'
+    context_object_name = 'event'
+    
+    def get_success_url(self):
+        return reverse_lazy('guild-detail', kwargs={'pk': self.object.guild.pk})
+
+    def dispatch(self, request, *args, **kwargs):
+        self.event = self.get_object()
+        if request.user.profile not in [self.event.guild.owner] and \
+        self.event.guild.membership_set.get(profile=request.user.profile).role not in ('OFFICER', 'LEADER'):
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
 
 def signup(request):
     if request.method == 'POST':

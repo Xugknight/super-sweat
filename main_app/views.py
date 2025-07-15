@@ -47,7 +47,7 @@ def signup(request):
         error = 'Invalid signup, please try again.'
     else:
         form = UserCreationForm()
-    return render(request, 'signup.html', {'form': form, 'error': error})
+    return render(request, 'registration/signup.html', {'form': form, 'error': error})
 
 def about(request):
     return render(request, 'about.html')

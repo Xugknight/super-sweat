@@ -1,10 +1,7 @@
 from django.contrib import admin
-from .models import (
-    Profile, ExternalAccount,
-    Guild, Membership,
-    Event, EventTemplate,
-    RSVP
-)
+from .models import Profile, ExternalAccount, Guild, Membership, Event, EventTemplate, RSVP
+  
+
 class ExternalAccountInline(admin.TabularInline):
     model = ExternalAccount
     extra = 1            

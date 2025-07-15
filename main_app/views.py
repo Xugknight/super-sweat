@@ -8,7 +8,7 @@ from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import Profile, Guild, Membership, Event, EventTemplate, RSVP, ExternalAccount
 from .forms import ProfileForm, EventCreateForm, RSVPform, ExternalAccountForm
 
@@ -20,8 +20,20 @@ ExternalAccountFormSet = inlineformset_factory(
     can_delete=True,
 )
 
-class Home(LoginView):
+class Home(TemplateView):
     template_name = 'home.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        user = self.request.user
+        if user.is_authenticated:
+            profile = user.profile
+            ctx['my_guilds'] = profile.guilds.all()
+            now = timezone.now()
+            ctx['upcoming_events'] = Event.objects.filter(
+                guild__in = ctx['my_guilds'], start_time__gte = now
+            ).order_by('start_time')[:5]
+        return ctx
 
 def signup(request):
     error = ''

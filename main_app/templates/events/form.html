@@ -63,4 +63,27 @@
       </a>
     </div>
   </form>
+
+  <script>
+const templateDefaults = {
+  {% for tpl in guild.templates.all %}
+    "{{ tpl.pk }}": {
+      title:       "{{ tpl.name|escapejs }}",
+      roles:       "{{ tpl.default_roles|escapejs }}",
+    }{% if not forloop.last %},{% endif %}
+  {% endfor %}
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const sel = document.getElementById('id_template');
+  sel.addEventListener('change', () => {
+    const data = templateDefaults[ sel.value ];
+    if (data) {
+      document.getElementById('id_title').value          = data.title;
+      document.getElementById('id_required_roles').value = data.roles;
+    }
+  });
+});
+</script>
+
 {% endblock %}

@@ -4,12 +4,21 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import PermissionDenied
+from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Profile, Guild, Membership, Event, EventTemplate, RSVP
-from .forms import ProfileForm, EventCreateForm, RSVPform
+from .models import Profile, Guild, Membership, Event, EventTemplate, RSVP, ExternalAccount
+from .forms import ProfileForm, EventCreateForm, RSVPform, ExternalAccountForm
+
+ExternalAccountFormSet = inlineformset_factory(
+    Profile, 
+    ExternalAccount,
+    form=ExternalAccountForm,
+    extra=1,
+    can_delete=True,
+)
 
 class Home(LoginView):
     template_name = 'home.html'
@@ -46,10 +55,30 @@ class ProfileUpdate(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return get_object_or_404(Profile, user=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        if self.request.POST:
+            ctx['external_formset'] = ExternalAccountFormSet(
+                self.request.POST, 
+                instance=self.object,
+            )
+        else: ctx['external_formset'] = ExternalAccountFormSet(
+            instance=self.object,
+        )
+        return ctx
 
     def form_valid(self, form):
-        form.save()
-        return redirect('profile-detail')
+        context=self.get_context_data()
+        formset=context['external_formset']
+        if form.is_valid() and formset.is_valid():
+            profile=form.save()
+            formset.instance=profile
+            formset.save()
+            return redirect('profile-detail')
+        else : 
+            return self.render_to_response(self.get_context_data(form=form)) 
+    
 
 class ProfileDelete(LoginRequiredMixin, DeleteView):
     model = Profile

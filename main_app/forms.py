@@ -1,5 +1,6 @@
 from django import forms
-from .models import Profile, Event, EventTemplate, RSVP
+from .models import Profile, Event, EventTemplate, RSVP, ExternalAccount
+
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -55,4 +56,17 @@ class RSVPform(forms.ModelForm):
         widgets = {
             'response': forms.Select(),
             'role_signed_up': forms.TextInput(attrs={'placeholder': 'dps-tank-heal','class': 'form-control'}),
+        }
+
+class ExternalAccountForm(forms.ModelForm):
+    class Meta:
+        model = ExternalAccount
+        fields = [
+            'service',
+            'identifier',
+            'url',
+        ]
+        widgets = {
+            'identifier': forms.TextInput(attrs={'placeholder':'username or id'}),
+            'url': forms.URLInput(attrs={'placeholder':'url'}),
         }

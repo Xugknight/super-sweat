@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Delete Guild?</h1>
+  </div>
+
+  <p>Are you sure you want to delete the guild <strong>{{ object.name }}</strong>?</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn danger">Yes, delete</button>
+    <a href="{% url 'guild-detail' object.pk %}" class="btn secondary">Cancel</a>
+  </form>
+{% endblock %}

@@ -79,8 +79,8 @@ class GuildDetail(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-        now = timezone.now()
-        upcoming = self.object.events.filter(start_time__gte=now)
+        today = timezone.localtime()
+        upcoming = self.object.events.filter(start_time__date__gte=today)
         data['upcoming_events'] = upcoming
         data['has_upcoming'] = upcoming.exists()
         all_memberships = self.object.membership_set.all()

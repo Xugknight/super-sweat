@@ -183,12 +183,21 @@ class EventCreate(LoginRequiredMixin, CreateView):
         self.guild = get_object_or_404(Guild, pk=kwargs['pk'])
         return super().dispatch(request, *args, **kwargs)
     
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['guild'] = self.guild 
+        return kwargs
+    
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['guild'] = self.guild
         return ctx
 
     def form_valid(self, form):
+        tpl = form.cleaned_data.get('template')
+        if tpl:
+            form.instance.title = tpl.name
+            form.instance.required_roles = tpl.default_roles
         event = form.save(commit=False)
         event.guild = self.guild
         event.save()

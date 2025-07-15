@@ -84,6 +84,9 @@
 
 <section>
   <h2>Upcoming Events</h2>
+    <a href="{% url 'event-create' guild.pk %}" class="btn submit">
+        + Schedule Event
+    </a>
   {% if has_upcoming %}
     <ul>
       {% for event in upcoming_events %}
@@ -113,11 +116,7 @@
       {% endfor %}
     </ul>
   {% else %}
-    <p>No upcoming events.
-      <a href="{% url 'event-create' guild.pk %}" class="btn submit">
-        + Schedule Event
-      </a>
-    </p>
+    <p>No upcoming events.</p>
   {% endif %}
 </section>
 

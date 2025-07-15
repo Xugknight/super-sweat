@@ -18,9 +18,43 @@
 
   <form method="post" class="form-container">
     {% csrf_token %}
-    {{ form.as_p }}
 
-    <div class="flex space-x-4 mt-4">
+    <div class="form-group">
+      {{ form.template.label_tag }}
+      {{ form.template }}
+    </div>
+
+    <div class="form-group">
+      {{ form.title.label_tag }}
+      {{ form.title }}
+    </div>
+
+    <div class="form-group">
+      {{ form.description.label_tag }}
+      {{ form.description }}
+    </div>
+
+    <div class="form-group">
+      {{ form.start_time.label_tag }}
+      {{ form.start_time }}
+    </div>
+
+    <div class="form-group">
+      {{ form.end_time.label_tag }}
+      {{ form.end_time }}
+    </div>
+
+    <div class="form-group">
+      {{ form.required_roles.label_tag }}
+      {{ form.required_roles }}
+    </div>
+
+    <div class="form-group">
+      {{ form.save_as_template.label_tag }}
+      {{ form.save_as_template }}
+    </div>
+
+    <div class="form-actions">
       <button type="submit" class="btn submit">
         {% if object %}Save Changes{% else %}Create Event{% endif %}
       </button>

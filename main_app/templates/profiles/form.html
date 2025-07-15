@@ -6,7 +6,22 @@
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-
+    <h2>External Accounts</h2>
+    {{ external_formset.management_form }}
+    <table>
+      {% for subform in external_formset %}
+        <tr>
+          <td>{{ subform.service.label_tag }}<br>{{ subform.service }}</td>
+          <td>{{ subform.identifier.label_tag }}<br>{{ subform.identifier }}</td>
+          <td>{{ subform.url.label_tag }}<br>{{ subform.url }}</td>
+          <td>
+            {% if subform.instance.pk %}
+              {{ subform.DELETE }} <label>Delete</label>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
     <button type="submit" class="btn submit">
       Save Changes
     </button>

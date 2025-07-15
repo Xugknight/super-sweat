@@ -182,12 +182,14 @@ class EventCreate(LoginRequiredMixin, CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.guild = get_object_or_404(Guild, pk=kwargs['pk'])
+        profile = request.user.profile
+        is_owner = (profile == self.guild.owner)
         is_member = Membership.objects.filter(
             guild = self.guild,
             profile = request.user.profile,
             status = Membership.STATUS_APPROVED
         ).exists()
-        if not is_member:
+        if not (is_owner or is_member):
             raise PermissionDenied('You must be a guild member to schedule events.')
         return super().dispatch(request, *args, **kwargs)
     

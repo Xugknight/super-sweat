@@ -84,9 +84,11 @@
 
 <section>
   <h2>Upcoming Events</h2>
+  {% if user.is_authenticated and is_approved %}
     <a href="{% url 'event-create' guild.pk %}" class="btn submit">
         + Schedule Event
     </a>
+  {% endif %}
   {% if has_upcoming %}
     <ul>
       {% for event in upcoming_events %}

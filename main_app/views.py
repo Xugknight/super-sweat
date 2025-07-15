@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -181,6 +182,13 @@ class EventCreate(LoginRequiredMixin, CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.guild = get_object_or_404(Guild, pk=kwargs['pk'])
+        is_member = Membership.objects.filter(
+            guild = self.guild,
+            profile = request.user.profile,
+            status = Membership.STATUS_APPROVED
+        ).exists()
+        if not is_member:
+            raise PermissionDenied('You must be a guild member to schedule events.')
         return super().dispatch(request, *args, **kwargs)
     
     def get_form(self, form_class=None):
@@ -218,6 +226,16 @@ class EventUpdate(LoginRequiredMixin, UpdateView):
     def dispatch(self, request, *args, **kwargs):
         self.event = self.get_object()
         self.guild = self.event.guild
+        profile = request.user.profile
+        is_owner = (profile == self.guild.owner)
+        is_officer = Membership.objects.filter(
+            guild=self.guild,
+            profile=profile,
+            role__in=('LEADER','OFFICER'),
+            status=Membership.STATUS_APPROVED
+        ).exists()
+        if not (is_owner or is_officer):
+            raise PermissionDenied('You aren’t allowed to edit this event.')
         return super().dispatch(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
@@ -241,6 +259,21 @@ class EventUpdate(LoginRequiredMixin, UpdateView):
 class EventDelete(LoginRequiredMixin, DeleteView):
     model = Event
     template_name = 'events/confirm_delete.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        event = self.get_object()
+        guild = event.guild
+        profile = request.user.profile
+        is_owner = (profile == guild.owner)
+        is_officer = Membership.objects.filter(
+            guild=guild,
+            profile=profile,
+            role__in=('LEADER','OFFICER'),
+            status=Membership.STATUS_APPROVED
+        ).exists()
+        if not (is_owner or is_officer):
+            raise PermissionDenied('You aren’t allowed to edit this event.')
+        return super().dispatch(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
         event = self.get_object()

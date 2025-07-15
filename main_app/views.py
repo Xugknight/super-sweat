@@ -8,8 +8,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Profile, Guild, Membership, Event, EventTemplate
-from .forms import ProfileForm, EventCreateForm
+from .models import Profile, Guild, Membership, Event, EventTemplate, RSVP
+from .forms import ProfileForm, EventCreateForm, RSVPform
 
 class Home(LoginView):
     template_name = 'home.html'
@@ -84,12 +84,20 @@ class GuildDetail(LoginRequiredMixin, DetailView):
         upcoming = self.object.events.filter(start_time__date__gte=today)
         data['upcoming_events'] = upcoming
         data['has_upcoming'] = upcoming.exists()
+        annotated = []
+        profile = self.request.user.profile
+        for event in upcoming:
+            event.count_yes = event.rsvps.filter(response='YES').count()
+            event.count_no = event.rsvps.filter(response='NO').count()
+            event.count_maybe = event.rsvps.filter(response='MAYBE').count()
+            my_rsvp = RSVP.objects.filter(event=event, profile=profile).first()
+            event.rsvp_form = RSVPform(instance=my_rsvp)
+            annotated.append(event)
         all_memberships = self.object.membership_set.all()
         data['approved_members'] = all_memberships.filter(status='APPROVED')
         data['pending_members'] = all_memberships.filter(status='PENDING')
         data['is_approved'] = data['approved_members'].filter(profile=self.request.user.profile).exists()
         data['is_pending'] = data['pending_members'].filter(profile=self.request.user.profile).exists()
-        profile = self.request.user.profile
         is_owner = (profile == self.object.owner)
         is_officer = all_memberships.filter(profile=profile, role__in=('LEADER', 'OFFICER')).exists()
         data['can_manage_events'] = is_owner or is_officer
@@ -287,3 +295,29 @@ class EventDetail(LoginRequiredMixin, DetailView):
     model = Event
     template_name = 'events/detail.html'
     context_object_name = 'event'
+
+@login_required
+def rsvp(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    profile = request.user.profile
+    guild = event.guild
+    is_owner = profile == guild.owner
+    is_officer = Membership.objects.filter(
+            guild=guild,
+            profile=profile,
+            role__in=('LEADER','OFFICER'),
+            status=Membership.STATUS_APPROVED
+        ).exists()
+    is_member = Membership.objects.filter(
+            guild=guild,
+            profile=profile,
+            status=Membership.STATUS_APPROVED
+        ).exists()
+    if not (is_owner or is_officer or is_member):
+        raise PermissionDenied('Only Guild Members can RSVP')
+    rsvp, _ = RSVP.objects.get_or_create(event=event, profile=profile)
+    if request.method == 'POST': 
+        form = RSVPform(request.POST, instance=rsvp)
+        if form.is_valid():
+            form.save()
+    return redirect ('guild-detail', pk=guild.pk)

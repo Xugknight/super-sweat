@@ -1,5 +1,5 @@
 from django import forms
-from .models import Profile, Event, EventTemplate
+from .models import Profile, Event, EventTemplate, RSVP
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -42,4 +42,17 @@ class EventCreateForm(forms.ModelForm):
         widgets = {
             'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
+class RSVPform(forms.ModelForm):
+    class Meta:
+        model = RSVP
+        fields = [
+            'response',
+            'role_signed_up',    
+        ]
+
+        widgets = {
+            'response': forms.Select(),
+            'role_signed_up': forms.TextInput(attrs={'placeholder': 'dps-tank-heal','class': 'form-control'}),
         }

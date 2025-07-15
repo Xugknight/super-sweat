@@ -84,6 +84,8 @@
 
 <section>
   <h2>Upcoming Events</h2>
+
+  {# Show the "Schedule Event" button only to owners or approved members #}
   {% if user.is_authenticated %}
   {% if is_approved or user.profile == guild.owner %}
   <a href="{% url 'event-create' guild.pk %}" class="btn submit mb-4">
@@ -91,28 +93,57 @@
   </a>
   {% endif %}
   {% endif %}
+
   {% if has_upcoming %}
   <ul>
     {% for event in upcoming_events %}
-    <li>
-      <a href="#" onclick="
-              document.getElementById('event-{{ event.pk }}')
-              .classList.toggle('hidden');
-              return false;
-          ">
+    <li class="mb-6">
+      <button class="text-left font-medium"
+        onclick="document.getElementById('event-{{ event.pk }}').classList.toggle('hidden'); return false;">
         {{ event.title }} — {{ event.start_time|date:"M d, Y H:i" }}
-      </a>
-      <div id="event-{{ event.pk }}" class="hidden">
+      </button>
+
+      <div id="event-{{ event.pk }}" class="hidden pl-4 mt-2">
         <p><strong>Ends:</strong> {{ event.end_time|date:"H:i" }}</p>
-        {% if event.description %}<p>{{ event.description }}</p>{% endif %}
-        {% if event.required_roles %}<p>Roles: {{ event.required_roles }}</p>{% endif %}
-        <p>RSVPs: {{ event.rsvps.count }}</p>
-        {% if can_manage_events %}
-        <a href="{% url 'event-update' event.pk %}" class="btn secondary">Edit</a>
-        <form action="{% url 'event-delete' event.pk %}" method="post" style="display:inline">
+
+        {% if event.description %}
+        <p>{{ event.description }}</p>
+        {% endif %}
+        {% if event.required_roles %}
+        <p><strong>Roles:</strong> {{ event.required_roles }}</p>
+        {% endif %}
+
+        {# — RSVP Counts — #}
+        <p class="mt-2">
+          ✅ {{ event.count_yes }}
+          ❓ {{ event.count_maybe }}
+          ❌ {{ event.count_no }}
+        </p>
+
+        {# — RSVP Form — #}
+        {% if user.is_authenticated %}
+        {% if is_approved or user.profile == guild.owner %}
+        <form method="post" action="{% url 'rsvp' event.pk %}" class="flex items-center space-x-2 my-2">
           {% csrf_token %}
-          <button class="btn danger">Delete</button>
+          {{ event.rsvp_form.response }}
+          {{ event.rsvp_form.role_signed_up }}
+          <button type="submit" class="btn submit">
+            {% if event.rsvp_form.instance.pk %}Update RSVP{% else %}RSVP{% endif %}
+          </button>
         </form>
+        {% endif %}
+        {% endif %}
+
+        {# — Edit/Delete for officers & owner — #}
+        {% if can_manage_events %}
+        <div class="flex space-x-2 mt-2">
+          <a href="{% url 'event-update' event.pk %}" class="btn secondary">Edit</a>
+          <form action="{% url 'event-delete' event.pk %}" method="post"
+            onsubmit="return confirm('Really delete this event?');">
+            {% csrf_token %}
+            <button class="btn danger">Delete</button>
+          </form>
+        </div>
         {% endif %}
       </div>
     </li>

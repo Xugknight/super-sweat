@@ -108,6 +108,11 @@ class ProfileDelete(LoginRequiredMixin, DeleteView):
         user.delete()
 
         return redirect(self.success_url)
+    
+class ProfilePublicDetail(LoginRequiredMixin, DetailView):
+    model = Profile
+    template_name = 'profiles/detail.html'
+    context_object_name = 'profile'
 
 class GuildList(LoginRequiredMixin, ListView):
     model = Guild

@@ -11,6 +11,7 @@ urlpatterns = [
     path('profile/', views.ProfileDetail.as_view(), name='profile-detail'),
     path('profile/edit/', views.ProfileUpdate.as_view(), name='profile-edit'),
     path('profile/delete/', views.ProfileDelete.as_view(), name='profile-delete'),
+    path('profiles/<int:pk>/', views.ProfilePublicDetail.as_view(), name='profile-public'),
 
     # Guild
     path('guilds/', views.GuildList.as_view(), name='guild-list'),

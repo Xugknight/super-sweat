@@ -24,7 +24,7 @@
   <ul>
     {% for m in approved_members %}
     <li>
-      <a href="{% url 'profile-detail' %}">{{ m.profile.display_name }}</a>
+      <a href="{% url 'profile-public' m.profile.pk %}">{{ m.profile.display_name }}</a>
       ({{ m.get_role_display }})
       {% if user.profile == guild.owner %}
       <form action="{% url 'membership-update-role' guild.pk m.pk %}" method="post" style="display:inline">

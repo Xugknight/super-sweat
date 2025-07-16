@@ -1,0 +1,77 @@
+/* css/dashboard.css */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+/* Header card */
+.dash-header {
+  background: var(--bg-steel);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+.dash-header h1 {
+  margin: 0;
+  font-size: var(--font-xl);
+  color: var(--text-headline);
+}
+
+/* Two‑column layout */
+.dash-two-col {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.dash-two-col > .dash-section {
+  flex: 1 1 300px;
+}
+
+/* Section cards */
+.dash-section {
+  background: var(--bg-steel);
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+.dash-section h2 {
+  margin-top: 0;
+  font-size: var(--font-l);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 0.5rem;
+}
+
+/* Lists inside dashboard */
+.dash-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.dash-list li {
+  margin: 0.8rem 0;
+}
+.dash-list a {
+  text-decoration: none;
+  color: var(--text-main);
+  font-weight: 500;
+}
+.dash-list a:hover {
+  text-decoration: underline;
+}
+
+/* Empty state */
+.empty {
+  color: rgba(255,255,255,0.6);
+  font-style: italic;
+  margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .dash-two-col {
+    flex-direction: column;
+  }
+}

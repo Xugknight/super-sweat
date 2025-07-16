@@ -1,15 +1,28 @@
 {% extends 'base.html' %}
-{% block title %}{% if object %}Edit Guild{% else %}Create Guild{% endif %}{% endblock %}
+{% load static %}
+{% block head %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
 
 {% block content %}
-  <h1>{% if object %}Edit{% else %}New{% endif %} Guild</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-
-    <button type="submit" class="btn submit">
-      {% if object %}Save Changes{% else %}Create Guild{% endif %}
-    </button>
-    <a href="{% url 'guild-list' %}" class="btn secondary">Cancel</a>
-  </form>
+  <div class="form-container">
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        {{ form.name.label_tag }}
+        {{ form.name }}
+      </div>
+      <div class="form-group">
+        {{ form.description.label_tag }}
+        {{ form.description }}
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn submit">
+          {% if object %}Save Changes{% else %}Create Guild{% endif %}
+        </button>
+        <a href="{% url 'guild-list' %}" class="btn secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
 {% endblock %}

@@ -1,36 +1,81 @@
 {% extends 'base.html' %}
-{% block title %}Edit Profile{% endblock %}
+{% load static %}
+
+{% block head %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
 
 {% block content %}
-  <h1>Edit Your Profile</h1>
-  <form method="post" enctype="multipart/form-data" action="{% url 'profile-edit' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <h2>External Accounts</h2>
-    {{ external_formset.management_form }}
-    <table>
-      {% for subform in external_formset %}
-        <tr>
-          {% for hidden in subform.hidden_fields %}
-            {{ hidden }}
-          {% endfor %}
-          
-          <td>{{ subform.service.label_tag }}<br>{{ subform.service }}</td>
-          <td>{{ subform.identifier.label_tag }}<br>{{ subform.identifier }}</td>
-          <td>{{ subform.url.label_tag }}<br>{{ subform.url }}</td>
-          <td>
-            {% if subform.instance.pk %}
-              {{ subform.DELETE }} <label for="{{ subform.DELETE.id_for_label }}">Delete</label>
+  <div class="form-container">
+
+    <h2>Linked Accounts</h2>
+    {% if external_accounts %}
+      <ul>
+        {% for acct in external_accounts %}
+          <li class="flex items-center">
+            <strong>{{ acct.get_service_display }}:</strong>
+            {% if acct.url %}
+              <a href="{{ acct.url }}" target="_blank">
+                {{ acct.identifier }}
+              </a>
+            {% else %}
+              {{ acct.identifier }}
             {% endif %}
-          </td>
-        </tr>
+            <form
+              action="{% url 'external-delete' acct.pk %}"
+              method="post"
+              class="ml-auto"
+            >
+              {% csrf_token %}
+              <button type="submit" class="btn danger btn-sm">
+                Remove
+              </button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p><em>No linked accounts yet.</em></p>
+    {% endif %}
+
+    <hr>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {{ form.as_p }}
+
+      <hr>
+
+      <h2>Add a New External Account</h2>
+      {{ external_formset.management_form }}
+
+      {% for subform in external_formset.forms %}
+        {{ subform.non_field_errors }}
+        <div class="form-group">
+          {{ subform.service.label_tag }}
+          {{ subform.service }}
+          {{ subform.service.errors }}
+        </div>
+        <div class="form-group">
+        <label for="{{ subform.identifier.id_for_label }}">Username</label>
+          {{ subform.identifier }}
+          {{ subform.identifier.errors }}
+        </div>
+        <div class="form-group">
+          {{ subform.url.label_tag }}
+          {{ subform.url }}
+          {{ subform.url.errors }}
+        </div>
       {% endfor %}
-    </table>
-    <button type="submit" class="btn submit">
-      Save Changes
-    </button>
-    <a href="{% url 'profile-detail' %}" class="btn secondary">
-      Cancel
-    </a>
-  </form>
+
+      <div class="form-actions">
+        <button type="submit" class="btn submit">Save Changes</button>
+        <a href="{% url 'profile-detail' %}" class="btn secondary">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
 {% endblock %}

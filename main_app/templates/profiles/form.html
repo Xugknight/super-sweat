@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block head %}
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'css/form.css' %}">
@@ -7,41 +8,73 @@
 
 {% block content %}
   <div class="form-container">
+
+    <h2>Linked Accounts</h2>
+    {% if external_accounts %}
+      <ul>
+        {% for acct in external_accounts %}
+          <li class="flex items-center">
+            <strong>{{ acct.get_service_display }}:</strong>
+            {% if acct.url %}
+              <a href="{{ acct.url }}" target="_blank">
+                {{ acct.identifier }}
+              </a>
+            {% else %}
+              {{ acct.identifier }}
+            {% endif %}
+            <form
+              action="{% url 'external-delete' acct.pk %}"
+              method="post"
+              class="ml-auto"
+            >
+              {% csrf_token %}
+              <button type="submit" class="btn danger btn-sm">
+                Remove
+              </button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p><em>No linked accounts yet.</em></p>
+    {% endif %}
+
+    <hr>
+
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
-      <div class="form-group">
-        {{ form.display_name.label_tag }}
-        {{ form.display_name }}
-      </div>
-      <div class="form-group">
-        {{ form.rank.label_tag }}
-        {{ form.rank }}
-      </div>
-      <!-- etc. for each Profile field… -->
-      <h2>External Accounts</h2>
+      {{ form.non_field_errors }}
+      {{ form.as_p }}
+
+      <hr>
+
+      <h2>Add a New External Account</h2>
       {{ external_formset.management_form }}
-      {% for subform in external_formset %}
+
+      {% for subform in external_formset.forms %}
+        {{ subform.non_field_errors }}
         <div class="form-group">
           {{ subform.service.label_tag }}
           {{ subform.service }}
+          {{ subform.service.errors }}
         </div>
         <div class="form-group">
-          {{ subform.identifier.label_tag }}
+        <label for="{{ subform.identifier.id_for_label }}">Username</label>
           {{ subform.identifier }}
+          {{ subform.identifier.errors }}
         </div>
         <div class="form-group">
           {{ subform.url.label_tag }}
           {{ subform.url }}
+          {{ subform.url.errors }}
         </div>
-        {% if subform.instance.pk %}
-          <div class="form-group">
-            {{ subform.DELETE }} <label for="{{ subform.DELETE.id_for_label }}">Delete</label>
-          </div>
-        {% endif %}
       {% endfor %}
+
       <div class="form-actions">
         <button type="submit" class="btn submit">Save Changes</button>
-        <a href="{% url 'profile-detail' %}" class="btn secondary">Cancel</a>
+        <a href="{% url 'profile-detail' %}" class="btn secondary">
+          Cancel
+        </a>
       </div>
     </form>
   </div>

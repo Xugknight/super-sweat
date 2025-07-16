@@ -1,6 +1,6 @@
-/* static/css/form.css */
-
-/* Container to center every form up to a max‑width */
+/* ==========================================================================
+   1. FORM CONTAINER
+   ========================================================================== */
 .form-container {
   max-width: 500px;
   margin: 3rem auto;
@@ -14,14 +14,32 @@
   gap: 1.5rem;
 }
 
-/* Group label and control in a column */
+/* ==========================================================================
+   2. SECTION HEADINGS
+   ========================================================================== */
+.form-container h2,
+.form-container .section-heading {
+  text-align: center;
+  margin: 2rem 0 1.5rem;
+}
+
+/* ==========================================================================
+   3. LABELS & FORM‑GROUP
+   ========================================================================== */
 .form-container .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
+.form-container .form-group label {
+  font-size: var(--font-l);
+  color: var(--text-headline);
+  font-weight: 600;
+}
 
-/* Full‑width inputs, selects, textareas */
+/* ==========================================================================
+   4. INPUTS, SELECTS, TEXTAREAS
+   ========================================================================== */
 .form-container input[type="text"],
 .form-container input[type="password"],
 .form-container input[type="email"],
@@ -40,22 +58,15 @@
   box-sizing: border-box;
 }
 
-/* Checkbox and radio inline alignment */
-.form-container input[type="checkbox"],
-.form-container input[type="radio"] {
-  margin-right: 0.5rem;
-  vertical-align: middle;
-}
-
-/* Actions row (submit/cancel buttons) */
+/* ==========================================================================
+   5. BUTTONS
+   ========================================================================== */
 .form-container .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
 }
-
-/* Reuse your existing .btn styling */
 .form-container .btn {
   text-transform: uppercase;
   font-size: var(--font-reg);
@@ -63,8 +74,7 @@
   padding: 0.75rem 1.5rem;
   border-radius: var(--radius);
 }
-
-/* Primary submit */
+/* primary */
 .form-container .btn.submit {
   background-color: var(--accent-primary);
   border-color: var(--accent-primary);
@@ -75,8 +85,7 @@
   border-color: var(--accent-orange);
   color: var(--bg-steel);
 }
-
-/* Secondary (cancel) */
+/* secondary */
 .form-container .btn.secondary {
   background-color: var(--bg-steel);
   border-color: var(--bg-steel);
@@ -87,8 +96,7 @@
   border-color: var(--accent-orange);
   color: var(--accent-orange);
 }
-
-/* Danger buttons in forms (e.g. delete) */
+/* danger */
 .form-container .btn.danger {
   background-color: #B22222;
   border-color: #B22222;
@@ -97,4 +105,39 @@
 .form-container .btn.danger:hover {
   background-color: #8b1a1a;
   border-color: #8b1a1a;
+}
+
+/* ==========================================================================
+   6. INLINE DELETE ROW (if you still have it)
+   ========================================================================== */
+.form-container .delete-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.25rem;
+  border-radius: var(--radius);
+  transition: background 0.2s;
+}
+.form-container .delete-group:hover {
+  background: rgba(255,0,0,0.05);
+}
+.form-container input[type="checkbox"][name$="-DELETE"] {
+  display: none;
+}
+
+/* ==========================================================================
+   7. TINY BUTTONS
+   ========================================================================== */
+.form-container .btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 1.2rem;
+  border-width: 1px;
+}
+
+/* ==========================================================================
+   8. UTILITY (e.g. remove button in flex list)
+   ========================================================================== */
+ul.flex.items-center li form {
+  margin-left: auto;
 }

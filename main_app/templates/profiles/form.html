@@ -1,36 +1,48 @@
 {% extends 'base.html' %}
-{% block title %}Edit Profile{% endblock %}
+{% load static %}
+{% block head %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
 
 {% block content %}
-  <h1>Edit Your Profile</h1>
-  <form method="post" enctype="multipart/form-data" action="{% url 'profile-edit' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <h2>External Accounts</h2>
-    {{ external_formset.management_form }}
-    <table>
+  <div class="form-container">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        {{ form.display_name.label_tag }}
+        {{ form.display_name }}
+      </div>
+      <div class="form-group">
+        {{ form.rank.label_tag }}
+        {{ form.rank }}
+      </div>
+      <!-- etc. for each Profile field… -->
+      <h2>External Accounts</h2>
+      {{ external_formset.management_form }}
       {% for subform in external_formset %}
-        <tr>
-          {% for hidden in subform.hidden_fields %}
-            {{ hidden }}
-          {% endfor %}
-          
-          <td>{{ subform.service.label_tag }}<br>{{ subform.service }}</td>
-          <td>{{ subform.identifier.label_tag }}<br>{{ subform.identifier }}</td>
-          <td>{{ subform.url.label_tag }}<br>{{ subform.url }}</td>
-          <td>
-            {% if subform.instance.pk %}
-              {{ subform.DELETE }} <label for="{{ subform.DELETE.id_for_label }}">Delete</label>
-            {% endif %}
-          </td>
-        </tr>
+        <div class="form-group">
+          {{ subform.service.label_tag }}
+          {{ subform.service }}
+        </div>
+        <div class="form-group">
+          {{ subform.identifier.label_tag }}
+          {{ subform.identifier }}
+        </div>
+        <div class="form-group">
+          {{ subform.url.label_tag }}
+          {{ subform.url }}
+        </div>
+        {% if subform.instance.pk %}
+          <div class="form-group">
+            {{ subform.DELETE }} <label for="{{ subform.DELETE.id_for_label }}">Delete</label>
+          </div>
+        {% endif %}
       {% endfor %}
-    </table>
-    <button type="submit" class="btn submit">
-      Save Changes
-    </button>
-    <a href="{% url 'profile-detail' %}" class="btn secondary">
-      Cancel
-    </a>
-  </form>
+      <div class="form-actions">
+        <button type="submit" class="btn submit">Save Changes</button>
+        <a href="{% url 'profile-detail' %}" class="btn secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
 {% endblock %}

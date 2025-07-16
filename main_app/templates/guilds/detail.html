@@ -6,159 +6,142 @@
 {% endblock %}
 
 {% block content %}
-<div class="page-header">
-  <h1>{{ guild.name }}</h1>
-</div>
+<div class="guild-detail">
 
-{% if guild.description %}
-<p class="page-content">{{ guild.description }}</p>
-{% endif %}
+  <!-- Header -->
+  <header class="guild-header card">
+    <h1>{{ guild.name }}</h1>
+    {% if request.user.profile == guild.owner %}
+      <div class="owner-actions">
+        <a href="{% url 'guild-update' guild.pk %}" class="btn secondary">Edit</a>
+        <a href="{% url 'guild-delete' guild.pk %}" class="btn danger">Delete</a>
+      </div>
+    {% endif %}
+  </header>
 
-<p class="page-content">
-  <strong>Owned by:</strong> {{ guild.owner.display_name }}<br>
-  <strong>Created on:</strong> {{ guild.created_at|date:"M d, Y" }}
-</p>
+  <!-- Description -->
+  {% if guild.description %}
+    <section class="card guild-description">
+      <p>{{ guild.description }}</p>
+      <p class="meta">
+        <strong>Owner:</strong> {{ guild.owner.display_name }}<br>
+        <strong>Created:</strong> {{ guild.created_at|date:"M d, Y" }}
+      </p>
+    </section>
+  {% endif %}
 
-<section>
-  <h2>Members ({{ approved_members|length }})</h2>
-  <ul>
-    {% for m in approved_members %}
-    <li>
-      <a href="{% url 'profile-public' m.profile.pk %}">{{ m.profile.display_name }}</a>
-      ({{ m.get_role_display }})
-      {% if user.profile == guild.owner %}
-      <form action="{% url 'membership-update-role' guild.pk m.pk %}" method="post" style="display:inline">
-        {% csrf_token %}
-        <select name="role" onchange="this.form.submit()">
-          {% for code,label in role_choices %}
-          <option value="{{ code }}" {% if m.role == code %} selected{% endif %}>{{ label }}</option>
-          {% endfor %}
-        </select>
-      </form>
+  <!-- Two‑column: Pending + Events -->
+  <div class="two-col">
+    {% if can_manage_events %}
+      <section class="card pending-section">
+        <h2>Pending <span class="badge">{{ pending_members|length }}</span></h2>
+        {% if pending_members %}
+          <ul class="pending-list">
+            {% for req in pending_members %}
+              <li class="flex-between">
+                <span>{{ req.profile.display_name }}</span>
+                <div class="pending-actions">
+                  <form action="{% url 'membership-approve' guild.pk req.pk %}"
+                        method="post"
+                        class="inline-form">
+                    {% csrf_token %}
+                    <button class="btn submit">Approve</button>
+                  </form>
+                  <form action="{% url 'membership-reject' guild.pk req.pk %}"
+                        method="post"
+                        class="inline-form">
+                    {% csrf_token %}
+                    <button class="btn danger">Reject</button>
+                  </form>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="empty">No pending requests.</p>
+        {% endif %}
+      </section>
+    {% endif %}
+
+    <section class="card events-section">
+      <h2>Events <span class="badge">{{ upcoming_events|length }}</span></h2>
+      {% if request.user.is_authenticated %}
+        {% if is_approved or request.user.profile == guild.owner %}
+          <p><a href="{% url 'event-create' guild.pk %}" class="btn submit">Schedule Event</a></p>
+        {% endif %}
       {% endif %}
-    </li>
-    {% empty %}
-    <li>No members yet.</li>
-    {% endfor %}
-  </ul>
+      {% if has_upcoming %}
+        <ul class="event-list">
+          {% for event in upcoming_events %}
+            <li>
+              <a href="{% url 'event-detail' event.pk %}" class="event-link">
+                {{ event.title }}
+                <time datetime="{{ event.start_time }}">{{ event.start_time|date:"M d, Y H:i" }}</time>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="empty">No upcoming events.</p>
+      {% endif %}
+    </section>
+  </div>
 
-  {% if user.is_authenticated and user.profile != guild.owner %}
-  {% if is_approved %}
-  <form action="{% url 'guild-leave' guild.pk %}" method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn warn">Leave Guild</button>
-  </form>
-  {% elif is_pending %}
-  <p class="page-content">Membership pending approval…</p>
-  {% else %}
-  <form action="{% url 'guild-join' guild.pk %}" method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn submit">Request to Join</button>
-  </form>
-  {% endif %}
-  {% endif %}
-</section>
+  <!-- Member List -->
+  <section class="card member-section">
+    <h2>Members <span class="badge">{{ approved_members|length }}</span></h2>
+    {% if approved_members %}
+      <ul class="member-list">
+        {% for m in approved_members %}
+          <li class="flex-between">
+            <a href="{% url 'profile-public' m.profile.pk %}">
+              {{ m.profile.display_name }}
+            </a>
+            <div class="member-role">
+              {% if request.user.profile == guild.owner %}
+                <form action="{% url 'membership-update-role' guild.pk m.pk %}"
+                      method="post"
+                      class="inline-form">
+                  {% csrf_token %}
+                  <select name="role" onchange="this.form.submit()">
+                    {% for code,label in role_choices %}
+                      <option value="{{ code }}" {% if m.role == code %}selected{% endif %}>
+                        {{ label }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </form>
+              {% else %}
+                <span class="role-label">{{ m.get_role_display }}</span>
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty">No members yet.</p>
+    {% endif %}
 
-{% if can_manage_events %}
-<section>
-  <h2>Pending Requests</h2>
-  <ul>
-    {% for req in pending_members %}
-    <li>
-      {{ req.profile.display_name }}
-      <form action="{% url 'membership-approve' guild.pk req.pk %}" method="post" style="display:inline">
-        {% csrf_token %}
-        <button class="btn submit">Approve</button>
-      </form>
-      <form action="{% url 'membership-reject' guild.pk req.pk %}" method="post" style="display:inline">
-        {% csrf_token %}
-        <button class="btn danger">Reject</button>
-      </form>
-    </li>
-    {% empty %}
-    <li>No pending requests.</li>
-    {% endfor %}
-  </ul>
-</section>
-{% endif %}
-
-<section>
-  <h2>Upcoming Events</h2>
-
-  {# Show the "Schedule Event" button only to owners or approved members #}
-  {% if user.is_authenticated %}
-  {% if is_approved or user.profile == guild.owner %}
-  <a href="{% url 'event-create' guild.pk %}" class="btn submit mb-4">
-    + Schedule Event
-  </a>
-  {% endif %}
-  {% endif %}
-
-  {% if has_upcoming %}
-  <ul>
-    {% for event in upcoming_events %}
-    <li class="mb-6">
-      <button class="text-left font-medium"
-        onclick="document.getElementById('event-{{ event.pk }}').classList.toggle('hidden'); return false;">
-        {{ event.title }} — {{ event.start_time|date:"M d, Y H:i" }}
-      </button>
-
-      <div id="event-{{ event.pk }}" class="hidden pl-4 mt-2">
-        <p><strong>Ends:</strong> {{ event.end_time|date:"H:i" }}</p>
-
-        {% if event.description %}
-        <p>{{ event.description }}</p>
-        {% endif %}
-        {% if event.required_roles %}
-        <p><strong>Roles:</strong> {{ event.required_roles }}</p>
-        {% endif %}
-
-        {# — RSVP Counts — #}
-        <p class="mt-2">
-          ✅ {{ event.count_yes }}
-          ❓ {{ event.count_maybe }}
-          ❌ {{ event.count_no }}
-        </p>
-
-        {# — RSVP Form — #}
-        {% if user.is_authenticated %}
-        {% if is_approved or user.profile == guild.owner %}
-        <form method="post" action="{% url 'rsvp' event.pk %}" class="flex items-center space-x-2 my-2">
-          {% csrf_token %}
-          {{ event.rsvp_form.response }}
-          {{ event.rsvp_form.role_signed_up }}
-          <button type="submit" class="btn submit">
-            {% if event.rsvp_form.instance.pk %}Update RSVP{% else %}RSVP{% endif %}
-          </button>
-        </form>
-        {% endif %}
-        {% endif %}
-
-        {# — Edit/Delete for officers & owner — #}
-        {% if can_manage_events %}
-        <div class="flex space-x-2 mt-2">
-          <a href="{% url 'event-update' event.pk %}" class="btn secondary">Edit</a>
-          <form action="{% url 'event-delete' event.pk %}" method="post"
-            onsubmit="return confirm('Really delete this event?');">
+    {% if request.user.is_authenticated and request.user.profile != guild.owner %}
+      <div class="join-leave">
+        {% if is_approved %}
+          <form action="{% url 'guild-leave' guild.pk %}" method="post">
             {% csrf_token %}
-            <button class="btn danger">Delete</button>
+            <button class="btn warn">Leave Guild</button>
           </form>
-        </div>
+        {% else %}
+          {% if is_pending %}
+            <p class="pending">Membership pending…</p>
+          {% else %}
+            <form action="{% url 'guild-join' guild.pk %}" method="post">
+              {% csrf_token %}
+              <button class="btn submit">Join Guild</button>
+            </form>
+          {% endif %}
         {% endif %}
       </div>
-    </li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <p>No upcoming events.</p>
-  {% endif %}
-</section>
-
-{% if user.profile == guild.owner %}
-<hr>
-<a href="{% url 'guild-update' guild.pk %}" class="btn secondary">Edit Guild</a>
-<a href="{% url 'guild-delete' guild.pk %}" class="btn danger">Delete Guild</a>
-{% endif %}
+    {% endif %}
+  </section>
 
 </div>
 {% endblock %}

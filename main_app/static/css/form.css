@@ -141,3 +141,29 @@
 ul.flex.items-center li form {
   margin-left: auto;
 }
+
+.rsvp-counts p {
+  font-size: var(--font-reg);
+  margin-bottom: 0.5rem;
+}
+
+.card-list {
+  list-style: none;
+  padding: 0;
+}
+.card-list li {
+  margin-bottom: 1rem;
+}
+.card-list li a {
+  display: block;
+  padding: 1rem;
+  background: var(--bg-steel);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--text-main);
+  transition: box-shadow 0.2s ease;
+}
+.card-list li a:hover {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}

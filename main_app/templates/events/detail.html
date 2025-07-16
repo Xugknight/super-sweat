@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="card">
+  <h1>{{ event.title }}</h1>
+
+  <p><strong>When:</strong>
+    {{ event.start_time|date:"SHORT_DATETIME_FORMAT" }}
+    &ndash;
+    {{ event.end_time|date:"SHORT_DATETIME_FORMAT" }}
+  </p>
+
+  <p><strong>Description:</strong>
+    {{ event.description|default:"No description provided." }}
+  </p>
+
+  <hr>
+
+  <div class="rsvp-counts">
+    <p><strong>Yes:</strong> {{ count_yes }}</p>
+    <p><strong>No:</strong> {{ count_no }}</p>
+    <p><strong>Maybe:</strong> {{ count_maybe }}</p>
+  </div>
+
+  <hr>
+
+  <form method="post" action="{% url 'rsvp' event.pk %}">
+    {% csrf_token %}
+    <button
+      type="submit"
+      name="response"
+      value="YES"
+      class="btn {% if my_response == 'YES' %}submit{% else %}secondary{% endif %}"
+    >Yes</button>
+
+    <button
+      type="submit"
+      name="response"
+      value="NO"
+      class="btn {% if my_response == 'NO' %}submit{% else %}secondary{% endif %}"
+    >No</button>
+
+    <button
+      type="submit"
+      name="response"
+      value="MAYBE"
+      class="btn {% if my_response == 'MAYBE' %}submit{% else %}secondary{% endif %}"
+    >Maybe</button>
+  </form>
+
+  {% if can_manage_events %}
+    <hr>
+    <div class="form-actions">
+      <a href="{% url 'event-update' event.pk %}" class="btn">Edit</a>
+      <form method="post" action="{% url 'event-delete' event.pk %}" style="display:inline">
+        {% csrf_token %}
+        <button type="submit" class="btn danger">Delete</button>
+      </form>
+    </div>
+  {% endif %}
+
+  <div class="mt-4">
+    <a href="{% url 'guild-detail' event.guild.pk %}" class="btn secondary">&larr; Back to {{ event.guild.name }}</a>
+  </div>
+</main>
+{% endblock %}

@@ -3,7 +3,7 @@
 
 {% block content %}
   <h1>Edit Your Profile</h1>
-  <form method="post" enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data" action="{% url 'profile-edit' %}">
     {% csrf_token %}
     {{ form.as_p }}
     <h2>External Accounts</h2>
@@ -11,12 +11,16 @@
     <table>
       {% for subform in external_formset %}
         <tr>
+          {% for hidden in subform.hidden_fields %}
+            {{ hidden }}
+          {% endfor %}
+          
           <td>{{ subform.service.label_tag }}<br>{{ subform.service }}</td>
           <td>{{ subform.identifier.label_tag }}<br>{{ subform.identifier }}</td>
           <td>{{ subform.url.label_tag }}<br>{{ subform.url }}</td>
           <td>
             {% if subform.instance.pk %}
-              {{ subform.DELETE }} <label>Delete</label>
+              {{ subform.DELETE }} <label for="{{ subform.DELETE.id_for_label }}">Delete</label>
             {% endif %}
           </td>
         </tr>

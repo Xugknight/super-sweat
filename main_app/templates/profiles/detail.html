@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/profiles.css' %}">
+{% endblock %}
+
 {% block title %}My Profile{% endblock %}
 
 {% block content %}
@@ -13,7 +18,7 @@
   {% endif %}
 
   <h2>Linked Accounts</h2>
-  <ul>
+  <ul class="external-accounts">
     {% for acct in object.external_accounts.all %}
       <li>
         <strong>{{ acct.get_service_display }}:</strong>

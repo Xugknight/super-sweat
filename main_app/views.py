@@ -12,6 +12,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Profile, Guild, Membership, Event, EventTemplate, RSVP, ExternalAccount
 from .forms import ProfileForm, EventCreateForm, RSVPform, ExternalAccountForm
 
+EXTERNAL_PREFIX = 'external'
+
 ExternalAccountFormSet = inlineformset_factory(
     Profile, 
     ExternalAccount,
@@ -74,9 +76,11 @@ class ProfileUpdate(LoginRequiredMixin, UpdateView):
             ctx['external_formset'] = ExternalAccountFormSet(
                 self.request.POST, 
                 instance=self.object,
+                prefix=EXTERNAL_PREFIX,
             )
         else: ctx['external_formset'] = ExternalAccountFormSet(
             instance=self.object,
+            prefix=EXTERNAL_PREFIX,
         )
         return ctx
 

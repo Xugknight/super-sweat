@@ -1,0 +1,133 @@
+.guild-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Card wrapper */
+.card {
+  background: var(--bg-steel);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+
+/* Header */
+.guild-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.owner-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Description */
+.guild-description p {
+  margin: 0 0 1rem;
+}
+.guild-description .meta {
+  font-size: var(--font-sm);
+  color: rgba(255,255,255,0.6);
+}
+
+/* Two-column layout */
+.two-col {
+  display: flex;
+  gap: 1.5rem;
+}
+.two-col > .card {
+  flex: 1;
+}
+
+/* Badges & headings */
+.badge {
+  background: var(--accent-primary);
+  color: var(--text-headline);
+  border-radius: var(--radius);
+  padding: 0.2rem 0.6rem;
+  font-size: var(--font-reg);
+  vertical-align: middle;
+}
+.pending-section h2,
+.events-section h2,
+.member-section h2 {
+  margin-top: 0;
+}
+
+/* Flex helpers */
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+/* Lists */
+ul.member-list,
+ul.pending-list,
+ul.event-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+ul.member-list li,
+ul.pending-list li,
+ul.event-list li {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 0.75rem;
+}
+
+/* Pending actions */
+.pending-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Member role dropdown styling */
+.member-role select {
+  padding: 0.25em 0.5em;
+  font-size: 0.9rem;
+  background: var(--bg-charcoal);
+  color: var(--text-main);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius);
+}
+.member-role .role-label {
+  font-weight: 500;
+}
+
+/* Empty/Pending text */
+.empty,
+.pending {
+  color: rgba(255,255,255,0.6);
+  font-style: italic;
+}
+
+/* Buttons */
+.btn {
+  text-transform: uppercase;
+  font-size: var(--font-reg);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+}
+.btn.submit    { background: var(--accent-primary); color: var(--text-headline); }
+.btn.secondary { background: var(--bg-charcoal);  color: var(--text-main); }
+.btn.danger    { background: #B22222;              color: var(--text-headline); }
+.btn.warn      { background: #FF8C00;              color: var(--text-headline); }
+
+/* Event links */
+.event-link {
+  display: block;
+  text-decoration: none;
+  padding: 0.5rem 0;
+  color: var(--text-main);
+}
+.event-link time {
+  display: block;
+  font-size: var(--font-sm);
+  color: rgba(255,255,255,0.6);
+}

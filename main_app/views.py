@@ -7,6 +7,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
 from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Case, When, Value, IntegerField
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, View
@@ -132,26 +133,38 @@ class GuildDetail(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
+
         today = timezone.localtime()
-        upcoming = self.object.events.filter(start_time__date__gte=today)
+        upcoming = self.object.events.filter(start_time__date__gte=today).order_by('start_time')
         data['upcoming_events'] = upcoming
         data['has_upcoming'] = upcoming.exists()
-        annotated = []
+
         profile = self.request.user.profile
         for event in upcoming:
             event.count_yes = event.rsvps.filter(response='YES').count()
             event.count_no = event.rsvps.filter(response='NO').count()
             event.count_maybe = event.rsvps.filter(response='MAYBE').count()
-            my_rsvp = RSVP.objects.filter(event=event, profile=profile).first()
-            event.rsvp_form = RSVPform(instance=my_rsvp)
-            annotated.append(event)
-        all_memberships = self.object.membership_set.all()
-        data['approved_members'] = all_memberships.filter(status='APPROVED')
-        data['pending_members'] = all_memberships.filter(status='PENDING')
-        data['is_approved'] = data['approved_members'].filter(profile=self.request.user.profile).exists()
-        data['is_pending'] = data['pending_members'].filter(profile=self.request.user.profile).exists()
+            event.rsvp_form = RSVPform(instance=RSVP.objects.filter(event=event, profile=profile).first())
+
+        base_qs = self.object.membership_set.filter(status=Membership.STATUS_APPROVED)
+        prioritized = base_qs.annotate(
+            sort_order=Case(
+                When(role='LEADER',  then=Value(0)),
+                When(role='OFFICER', then=Value(1)),
+                When(role='MEMBER',  then=Value(2)),
+                When(role='RECRUIT', then=Value(3)),
+                When(role='TRIAL',   then=Value(4)),
+                default=Value(5),
+                output_field=IntegerField(),
+            )
+        ).order_by('sort_order', 'profile__display_name')
+        data['approved_members'] = prioritized
+        data['pending_members'] = self.object.membership_set.filter(status=Membership.STATUS_PENDING)
+        data['is_approved'] = prioritized.filter(profile=profile).exists()
+        data['is_pending'] = data['pending_members'].filter(profile=profile).exists()
+
         is_owner = (profile == self.object.owner)
-        is_officer = all_memberships.filter(profile=profile, role__in=('LEADER', 'OFFICER')).exists()
+        is_officer = base_qs.filter(profile=profile, role__in=('LEADER', 'OFFICER')).exists()
         data['can_manage_events'] = is_owner or is_officer
         data['role_choices'] = Membership.ROLE_CHOICES
         return data
@@ -348,6 +361,25 @@ class EventDetail(LoginRequiredMixin, DetailView):
     template_name = 'events/detail.html'
     context_object_name = 'event'
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        event = self.object
+        ctx['count_yes'] = event.rsvps.filter(response='YES').count()
+        ctx['count_no'] = event.rsvps.filter(response='NO').count()
+        ctx['count_maybe'] = event.rsvps.filter(response='MAYBE').count()
+        my_rsvp = RSVP.objects.filter(event=event, profile=self.request.user.profile).first()
+        ctx['my_response'] = my_rsvp.response if my_rsvp else None
+        guild = event.guild
+        profile = self.request.user.profile
+        is_owner   = (profile == guild.owner)
+        is_officer = Membership.objects.filter(
+            guild=guild, profile=profile,
+            role__in=('LEADER','OFFICER'),
+            status=Membership.STATUS_APPROVED
+        ).exists()
+        ctx['can_manage_events'] = is_owner or is_officer
+        return ctx
+
 @login_required
 def rsvp(request, pk):
     event = get_object_or_404(Event, pk=pk)
@@ -372,4 +404,4 @@ def rsvp(request, pk):
         form = RSVPform(request.POST, instance=rsvp)
         if form.is_valid():
             form.save()
-    return redirect ('guild-detail', pk=guild.pk)
+    return redirect ('event-detail', pk=event.pk)

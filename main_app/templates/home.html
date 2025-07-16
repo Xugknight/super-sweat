@@ -2,73 +2,91 @@
 {% load static %}
 
 {% block head %}
-  {% if user.is_authenticated %}
-    <!-- you can load dashboard-specific CSS here -->
-  {% else %}
-    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
-  {% endif %}
+{% if user.is_authenticated %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% else %}
+<link rel="stylesheet" href="{% static 'css/landing.css' %}">
+{% endif %}
 {% endblock %}
 
 {% block content %}
 
-  {% if user.is_authenticated %}
-    <!-- ====== DASHBOARD ====== -->
-    <section class="page-header">
-      <h1>Welcome back, {{ user.profile.display_name }}!</h1>
-    </section>
+{% if user.is_authenticated %}
+<div class="dashboard">
 
-    <section>
+  <!-- Welcome Header -->
+  <header class="card dash-header">
+    <h1>Welcome back, {{ user.profile.display_name }}!</h1>
+  </header>
+
+  <!-- Two‑column: Your Guilds + Upcoming Events -->
+  <div class="dash-two-col">
+
+    <!-- Your Guilds -->
+    <section class="card dash-section">
       <h2>Your Guilds</h2>
-      <ul>
+      {% if my_guilds %}
+      <ul class="dash-list">
         {% for g in my_guilds %}
-          <li><a href="{% url 'guild-detail' g.pk %}">{{ g.name }}</a></li>
-        {% empty %}
-          <li>You’re not in any guilds yet.</li>
+        <li>
+          <a href="{% url 'guild-detail' g.pk %}">{{ g.name }}</a>
+        </li>
         {% endfor %}
       </ul>
+      {% else %}
+      <p class="empty">You're not in any guilds yet.</p>
+      {% endif %}
     </section>
 
-    <section>
+    <!-- Upcoming Events -->
+    <section class="card dash-section">
       <h2>Upcoming Events</h2>
-      <ul>
+      {% if upcoming_events %}
+      <ul class="dash-list">
         {% for ev in upcoming_events %}
-          <li>
-            <a href="{% url 'event-detail' ev.pk %}">
-              {{ ev.title }} on {{ ev.start_time|date:"M d, Y H:i" }}
-            </a>
-          </li>
-        {% empty %}
-          <li>No upcoming events in your guilds.</li>
+        <li>
+          <a href="{% url 'event-detail' ev.pk %}">
+            {{ ev.title }}<br>
+            <time datetime="{{ ev.start_time }}">{{ ev.start_time|date:"M d, Y H:i" }}</time>
+          </a>
+        </li>
         {% endfor %}
       </ul>
-    </section>
-  {% else %}
-    <!-- ====== LANDING PAGE ====== -->
-    <section class="hero text-center py-16">
-      <h1 class="text-4xl font-bold mb-4">Manage Your Gaming Guilds</h1>
-      <p class="mb-6">Organize raids, track members, and communicate—in one place.</p>
-      <a href="{% url 'signup' %}" class="btn submit mr-4">Get Started</a>
-      <a href="{% url 'login' %}" class="btn secondary">Log In</a>
+      {% else %}
+      <p class="empty">No upcoming events in your guilds.</p>
+      {% endif %}
     </section>
 
-    <section id="features" class="feature-grid my-16">
-      <div class="card p-6">
-        <h3>Member Management</h3>
-        <p>Invite, approve & track every member’s activity.</p>
-      </div>
-      <div class="card p-6">
-        <h3>Event Scheduling</h3>
-        <p>Plan raids, practice sessions, and social nights.</p>
-      </div>
-      <div class="card p-6">
-        <h3>Role System</h3>
-        <p>Custom roles for leaders, officers, veterans & recruits.</p>
-      </div>
-      <div class="card p-6">
-        <h3>RSVP & Notifications</h3>
-        <p>Manage who’s coming and send reminders.</p>
-      </div>
-    </section>
-  {% endif %}
+  </div>
+</div>
+
+{% else %}
+<!-- ====== LANDING PAGE ====== -->
+<section class="hero text-center py-16">
+  <h1 class="text-4xl font-bold mb-4">Manage Your Gaming Guilds</h1>
+  <p class="mb-6">Organize raids, track members, and communicate—in one place.</p>
+  <a href="{% url 'signup' %}" class="btn submit mr-4">Get Started</a>
+  <a href="{% url 'login' %}" class="btn secondary">Log In</a>
+</section>
+
+<section id="features" class="feature-grid my-16">
+  <div class="card p-6">
+    <h3>Member Management</h3>
+    <p>Invite, approve & track every member's activity.</p>
+  </div>
+  <div class="card p-6">
+    <h3>Event Scheduling</h3>
+    <p>Plan raids, practice sessions, and social nights.</p>
+  </div>
+  <div class="card p-6">
+    <h3>Role System</h3>
+    <p>Custom roles for leaders, officers, veterans & recruits.</p>
+  </div>
+  <div class="card p-6">
+    <h3>RSVP & Notifications</h3>
+    <p>Manage who's coming and send reminders.</p>
+  </div>
+</section>
+{% endif %}
 
 {% endblock %}

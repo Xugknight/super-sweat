@@ -1,19 +1,58 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/guilds/index.css' %}">
+{% endblock %}
+
 {% block title %}All Guilds{% endblock %}
+
 {% block content %}
-  <h1>All Guilds</h1>
-  <ul>
+<div class="guild-index">
+
+  <div class="header-bar">
+    <h1>All Guilds</h1>
+    {% if request.user.is_authenticated %}
+      <a href="{% url 'guild-create' %}" class="btn submit">+ Create Guild</a>
+    {% endif %}
+  </div>
+
+  <div class="guild-list">
     {% for guild in guilds %}
-      <li>
-        <a href="{% url 'guild-detail' guild.pk %}">
-          {{ guild.name }}
-        </a>
-      </li>
+      <article class="guild-card">
+        <header>
+          <h2 class="guild-name">{{ guild.name }}</h2>
+          {% if guild.platform %}
+            <span class="badge">{{ guild.get_platform_display }}</span>
+          {% endif %}
+        </header>
+
+        {% if guild.description %}
+          <p class="desc">{{ guild.description|truncatechars:100 }}</p>
+        {% else %}
+          <p class="desc empty">No description provided.</p>
+        {% endif %}
+
+        <div class="meta">
+          {{ guild.member_count }} members
+          {% if guild.timezone %} • {{ guild.timezone }}{% endif %}
+        </div>
+
+        <div class="actions">
+          <a href="{% url 'guild-detail' guild.pk %}" class="btn secondary">View</a>
+          {% if request.user.is_authenticated %}
+            {% if not guild in request.user.profile.guilds.all %}
+              <form method="post" action="{% url 'guild-join' guild.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn submit">Join</button>
+              </form>
+            {% endif %}
+          {% endif %}
+        </div>
+      </article>
     {% empty %}
-      <li>No guilds found.</li>
+      <p class="empty">No guilds found.</p>
     {% endfor %}
-  </ul>
-  <p>
-    <a href="{% url 'guild-create' %}">+ Create New Guild</a>
-  </p>
+  </div>
+</div>
 {% endblock %}

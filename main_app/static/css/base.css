@@ -143,26 +143,6 @@ p, li {
   margin-left: 1rem;
 }
 
-#logout-form button {
-  display: inline-block;
-  background-color: rgba(255, 255, 255, 0.05);
-  color: var(--text-main);
-  padding: 1.093rem 1.2rem;
-  font-size: var(--font-reg);
-  font-weight: 600;
-  font-family: inherit;
-  border: 1px solid var(--accent-orange);
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: background 0.2s ease;
-  margin-bottom: 0.5rem;
-}
-
-#logout-form button:hover {
-  background-color: rgba(200, 109, 49, 0.2);
-}
-
-
 .submit    { border-color: var(--accent-primary); }
 .warn      { border-color: var(--accent-orange); }
 .danger    { border-color: #B22222; }
@@ -202,18 +182,44 @@ section h2 {
   margin-bottom: 1rem;
 }
 
-ul li a { 
-  display: inline-block;
-  color: var(--text-main);
-  background-color: rgba(255,255,255,0.05);
-  padding: 0.6rem 1.2rem;
-  border-radius: var(--radius);
-  margin-bottom: 0.5rem;
-  border: 1px solid var(--accent-orange);
-  transition: background 0.2s ease;
+header nav ul {
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
 }
-ul li a:hover {
+
+header nav a,
+header nav #logout-form button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  font-size: var(--font-reg);
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  border: 1px solid var(--accent-orange);
+  border-radius: var(--radius);
+  background-color: rgba(255,255,255,0.05);
+  color: var(--text-main);
+  cursor: pointer;
+  margin: 0;
+  transition: background 0.2s ease;
+  text-decoration: none;
+  -webkit-appearance: none; 
+  appearance: none;
+}
+
+header nav a:hover,
+header nav #logout-form button:hover {
   background-color: rgba(200,109,49,0.2);
+  color: var(--accent-orange); 
+}
+
+header nav #logout-form {
+  margin: 0;
+  padding: 0;
+  display: inline;
 }
 
 /* ==========================================================================

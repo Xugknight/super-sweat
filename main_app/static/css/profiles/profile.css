@@ -1,0 +1,11 @@
+.external-accounts {
+  list-style: none;
+  padding: 0;
+}
+.external-accounts li {
+  margin-bottom: 0.5rem;
+}
+.external-accounts a {
+  color: var(--link-hover-color);
+  text-decoration: none;
+}

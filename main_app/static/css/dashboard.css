@@ -1,4 +1,12 @@
-/* css/dashboard.css */
+.dashboard .card {
+  border: none;
+  box-shadow: none;
+}
+.dashboard .card:hover,
+.dashboard .card:focus-within {
+  transform: none;
+  box-shadow: none;
+}
 
 .dashboard {
   display: flex;
@@ -7,7 +15,6 @@
   padding: 1rem;
 }
 
-/* Header card */
 .dash-header {
   background: var(--bg-steel);
   padding: 1.5rem;
@@ -16,11 +23,10 @@
 }
 .dash-header h1 {
   margin: 0;
-  font-size: var(--font-xl);
+  font-size: var(--font-l);
   color: var(--text-headline);
 }
 
-/* Two‑column layout */
 .dash-two-col {
   display: flex;
   gap: 1.5rem;
@@ -30,7 +36,6 @@
   flex: 1 1 300px;
 }
 
-/* Section cards */
 .dash-section {
   background: var(--bg-steel);
   padding: 1.25rem;
@@ -44,7 +49,6 @@
   padding-bottom: 0.5rem;
 }
 
-/* Lists inside dashboard */
 .dash-list {
   list-style: none;
   margin: 0;
@@ -62,14 +66,12 @@
   text-decoration: underline;
 }
 
-/* Empty state */
 .empty {
   color: rgba(255,255,255,0.6);
   font-style: italic;
   margin-top: 1rem;
 }
 
-/* Responsive */
 @media (max-width: 600px) {
   .dash-two-col {
     flex-direction: column;

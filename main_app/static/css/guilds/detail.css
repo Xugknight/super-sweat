@@ -1,18 +1,19 @@
+.card {
+  border: none;
+  box-shadow: none;
+}
+.card:hover,
+.card:focus-within {
+  transform: none;
+  box-shadow: none;
+}
+
 .guild-detail {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-/* Card wrapper */
-.card {
-  background: var(--bg-steel);
-  padding: 1.5rem;
-  border-radius: var(--radius);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
-}
-
-/* Header */
 .guild-header {
   display: flex;
   justify-content: space-between;
@@ -23,7 +24,6 @@
   gap: 0.5rem;
 }
 
-/* Description */
 .guild-description p {
   margin: 0 0 1rem;
 }
@@ -32,31 +32,23 @@
   color: rgba(255,255,255,0.6);
 }
 
-/* Two-column layout */
 .two-col {
   display: flex;
   gap: 1.5rem;
+  flex-wrap: wrap;
 }
 .two-col > .card {
-  flex: 1;
+  flex: 1 1 300px;
 }
 
-/* Badges & headings */
 .badge {
   background: var(--accent-primary);
   color: var(--text-headline);
-  border-radius: var(--radius);
   padding: 0.2rem 0.6rem;
+  border-radius: var(--radius);
   font-size: var(--font-reg);
-  vertical-align: middle;
-}
-.pending-section h2,
-.events-section h2,
-.member-section h2 {
-  margin-top: 0;
 }
 
-/* Flex helpers */
 .flex-between {
   display: flex;
   justify-content: space-between;
@@ -64,7 +56,6 @@
   margin-bottom: 0.75rem;
 }
 
-/* Lists */
 ul.member-list,
 ul.pending-list,
 ul.event-list {
@@ -79,13 +70,11 @@ ul.event-list li {
   padding-bottom: 0.75rem;
 }
 
-/* Pending actions */
 .pending-actions {
   display: flex;
   gap: 0.5rem;
 }
 
-/* Member role dropdown styling */
 .member-role select {
   padding: 0.25em 0.5em;
   font-size: 0.9rem;
@@ -98,36 +87,8 @@ ul.event-list li {
   font-weight: 500;
 }
 
-/* Empty/Pending text */
 .empty,
 .pending {
   color: rgba(255,255,255,0.6);
   font-style: italic;
-}
-
-/* Buttons */
-.btn {
-  text-transform: uppercase;
-  font-size: var(--font-reg);
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
-  border: none;
-  cursor: pointer;
-}
-.btn.submit    { background: var(--accent-primary); color: var(--text-headline); }
-.btn.secondary { background: var(--bg-charcoal);  color: var(--text-main); }
-.btn.danger    { background: #B22222;              color: var(--text-headline); }
-.btn.warn      { background: #FF8C00;              color: var(--text-headline); }
-
-/* Event links */
-.event-link {
-  display: block;
-  text-decoration: none;
-  padding: 0.5rem 0;
-  color: var(--text-main);
-}
-.event-link time {
-  display: block;
-  font-size: var(--font-sm);
-  color: rgba(255,255,255,0.6);
 }

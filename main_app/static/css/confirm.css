@@ -1,0 +1,85 @@
+/* ========================================================================== */
+/* CONFIRM DELETE STYLES                                                      */
+/* ========================================================================== */
+
+.confirm-wrapper {
+  max-width: 420px;
+  margin: 5rem auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Uses global .card from base.css; we just tweak spacing */
+.confirm-card {
+  padding: 3rem 2rem;
+}
+
+.confirm-card h1 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: var(--font-xl);
+  line-height: 1.2;
+}
+
+.confirm-icon {
+  font-size: 4rem;
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+.confirm-message {
+  font-size: var(--font-reg);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  color: var(--text-main);
+}
+
+.confirm-object {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: var(--font-l);
+  font-weight: 700;
+  color: var(--text-headline);
+  text-transform: uppercase;
+}
+
+/* Optional small meta lines about the thing being deleted */
+.confirm-meta {
+  margin-top: 1rem;
+  font-size: var(--font-sm, 1.2rem);
+  color: rgba(255,255,255,0.6);
+  line-height: 1.4;
+}
+
+/* Action buttons */
+.confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.confirm-actions .btn {
+  min-width: 9rem;
+  text-align: center;
+}
+
+.confirm-avatar {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  margin: 1rem auto;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+
+.danger-card {
+  box-shadow: inset 0 0 0 2px #B22222;
+}
+.danger-card:hover {
+  box-shadow: inset 0 0 0 2px var(--accent-orange);
+}

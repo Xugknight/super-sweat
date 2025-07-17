@@ -1,14 +1,32 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/confirm.css' %}">
+{% endblock %}
+
 {% block content %}
-  <h1>Delete Event "{{ event.title }}"</h1>
-  <p>Are you sure you want to delete this event scheduled for {{ event.start_time|date:"M d, Y H:i" }}?</p>
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded">
-      Yes, delete
-    </button>
-    <a href="{% url 'guild-detail' event.guild.pk %}" class="px-4 py-2 bg-gray-200 rounded">
-      Cancel
-    </a>
-  </form>
+{# Alias to handle DeleteView default context_object_name="object" #}
+{% with ev=event|default:object %}
+  <div class="confirm-wrapper">
+    <div class="confirm-card card danger-card">
+      <h1>Delete Event?</h1>
+      <p>Are you sure you want to delete the event
+        <strong>{{ ev.title }}</strong>
+        scheduled for
+        {{ ev.start_time|date:"M d, Y H:i" }}?
+      </p>
+
+      <form method="post" class="confirm-actions">
+        {% csrf_token %}
+        <button type="submit" class="btn danger">Yes, Delete</button>
+        <a href="{% url 'event-detail' ev.pk %}" class="btn secondary">Cancel</a>
+      </form>
+
+      <p class="confirm-subtext">
+        This will permanently remove the event and all associated RSVPs.
+      </p>
+    </div>
+  </div>
+{% endwith %}
 {% endblock %}

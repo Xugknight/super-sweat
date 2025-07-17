@@ -47,9 +47,12 @@ a {
   color: var(--text-main);
   text-decoration: none;
   font-weight: 600;
+  transition: color 0.15s ease;
 }
-a:hover {
+a:hover,
+a:focus {
   color: var(--accent-orange);
+  outline: none;
 }
 
 ul {
@@ -57,9 +60,9 @@ ul {
 }
 
 /* ==========================================================================
-   4. HEADER & NAVIGATION
+   4. SITE HEADER & NAVIGATION
    ========================================================================== */
-header {
+.site-header {
   width: 100%;
   background-color: var(--accent-primary);
   border-bottom: 2px solid var(--accent-orange);
@@ -67,20 +70,10 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 1rem 2rem;
+  gap: 2rem;
 }
 
-nav ul {
-  display: flex;
-  gap: 1.2rem;
-}
-nav a {
-  font-size: var(--font-reg);
-  font-weight: 700;
-}
-
-/* ==========================================================================
-   5. LOGO
-   ========================================================================== */
+/* Logo */
 .header-logo-container {
   max-width: 60px;
 }
@@ -90,8 +83,70 @@ nav a {
   display: block;
 }
 
+/* Main Nav */
+.main-nav {
+  display: flex;
+  align-items: center;
+}
+.main-nav .nav-list {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+
+/* Shared link/button look */
+.nav-link,
+.nav-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.4rem;
+  font-size: var(--font-reg);
+  font-weight: 600;
+  line-height: 1.2;
+  text-transform: uppercase;
+  border: 1px solid var(--accent-orange);
+  border-radius: var(--radius);
+  background-color: rgba(255,255,255,0.05);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.nav-link:hover,
+.nav-link:focus,
+.nav-link-button:hover,
+.nav-link-button:focus {
+  background-color: rgba(200,109,49,0.25);
+  color: var(--accent-orange);
+  transform: translateY(-1px);
+}
+
+/* Use on <a> links that are primary CTAs (e.g., Sign Up when logged out) */
+.nav-cta {
+  border-color: var(--accent-primary);
+  background-color: rgba(159,43,29,0.25);
+}
+.nav-cta:hover,
+.nav-cta:focus {
+  background-color: var(--accent-orange);
+  color: var(--bg-steel);
+}
+
+/* Remove default button styles for logout form button */
+#logout-form {
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+#logout-form button {
+  font-family: inherit;
+  /* We apply visual style via .nav-link-button class above */
+}
+
+
 /* ==========================================================================
-   6. MAIN
+   5. MAIN CONTENT WRAPPER
    ========================================================================== */
 main {
   width: 100%;
@@ -101,7 +156,7 @@ main {
 }
 
 /* ==========================================================================
-   7. TYPOGRAPHY
+   6. TYPOGRAPHY
    ========================================================================== */
 h1, h2, h3 {
   font-family: 'Press Start 2P', monospace;
@@ -118,7 +173,7 @@ p, li {
 }
 
 /* ==========================================================================
-   8. BUTTONS & FORMS
+   7. GENERIC BUTTONS (shared across app — forms, CTAs)
    ========================================================================== */
 .btn {
   display: inline-block;
@@ -132,24 +187,26 @@ p, li {
   background-color: var(--bg-steel);
   color: var(--text-headline);
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
 }
-.btn:hover {
+.btn:hover,
+.btn:focus {
   background-color: var(--accent-orange);
   color: var(--bg-steel);
+  transform: translateY(-1px);
 }
-
 .btn + .btn {
   margin-left: 1rem;
 }
 
+/* contextual borders */
 .submit    { border-color: var(--accent-primary); }
 .warn      { border-color: var(--accent-orange); }
 .danger    { border-color: #B22222; }
 .secondary { border-color: var(--bg-steel); }
 
 /* ==========================================================================
-   9. CARDS (Used on Landing Page & Dashboard)
+   8. CARD COMPONENT
    ========================================================================== */
 .card {
   background-color: var(--bg-steel);
@@ -161,13 +218,14 @@ p, li {
   box-shadow: inset 0 0 0 2px var(--accent-primary);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.card:hover {
+.card:hover,
+.card:focus-within {
   transform: translateY(-4px);
   box-shadow: inset 0 0 0 2px var(--accent-orange);
 }
 
 /* ==========================================================================
-   10. SECTIONS
+   9. PAGE SECTIONS
    ========================================================================== */
 .page-header h1 {
   font-size: var(--font-xl);
@@ -182,54 +240,15 @@ section h2 {
   margin-bottom: 1rem;
 }
 
-header nav ul {
-  display: flex;
-  gap: 1.2rem;
-  align-items: center;
-}
-
-header nav a,
-header nav #logout-form button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.6rem 1.2rem;
-  font-size: var(--font-reg);
-  font-weight: 600;
-  line-height: 1;
-  text-transform: uppercase;
-  border: 1px solid var(--accent-orange);
-  border-radius: var(--radius);
-  background-color: rgba(255,255,255,0.05);
-  color: var(--text-main);
-  cursor: pointer;
-  margin: 0;
-  transition: background 0.2s ease;
-  text-decoration: none;
-  -webkit-appearance: none; 
-  appearance: none;
-}
-
-header nav a:hover,
-header nav #logout-form button:hover {
-  background-color: rgba(200,109,49,0.2);
-  color: var(--accent-orange); 
-}
-
-header nav #logout-form {
-  margin: 0;
-  padding: 0;
-  display: inline;
-}
-
 /* ==========================================================================
-   11. MEDIA QUERIES
+   10. MEDIA QUERIES
    ========================================================================== */
 @media (min-width: 768px) {
   .page-header h1 { font-size: var(--font-xtreme); }
 }
+
 @media (min-width: 1024px) {
-  header {
+  .site-header {
     position: sticky;
     top: 0;
     z-index: 999;
@@ -237,3 +256,10 @@ header nav #logout-form {
   }
 }
 
+/* ==========================================================================
+   11. UTILITIES (shared across the app)
+   ========================================================================== */
+.empty {
+  color: rgba(255,255,255,0.6);
+  font-style: italic;
+}

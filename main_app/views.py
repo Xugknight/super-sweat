@@ -86,7 +86,6 @@ class ProfileUpdate(LoginRequiredMixin, UpdateView):
             formset.instance = self.object
             formset.save()
         return redirect('profile-detail')
-        # return self.form_invalid(form)
 
 class ProfileDelete(LoginRequiredMixin, DeleteView):
     model = Profile

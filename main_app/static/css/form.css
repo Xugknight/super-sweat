@@ -1,14 +1,7 @@
 /* ==========================================================================
-   FORM.CSS
-   Shared form styling across Signup, Login, Profile, Event, etc.
-   All rules are namespaced under .form-container where practical
-   to avoid bleeding into unrelated layouts.
+   FORM.CSS — shared form styling
    ========================================================================== */
 
-
-/* ==========================================================================
-   1. FORM CONTAINER WRAPPER
-   ========================================================================== */
 .form-container {
   max-width: 500px;
   margin: 3rem auto;
@@ -22,42 +15,30 @@
   gap: 1.5rem;
 }
 
-
-/* ==========================================================================
-   2. SECTION HEADINGS
-   (Used for blocks like “Add a New External Account”)
-   ========================================================================== */
 .form-container h2,
 .form-container .section-heading {
   text-align: center;
   margin: 2rem 0 1.5rem;
 }
 
-
-/* ==========================================================================
-   3. FORM GROUPS & LABELS
-   ========================================================================== */
 .form-container .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-
 .form-container .form-group label {
-  font-size: var(--font-l);           
+  font-size: var(--font-l);
   color: var(--text-headline);
   font-weight: 600;
 }
 
-
-/* ==========================================================================
-   4. CONTROLS: INPUTS, SELECTS, TEXTAREAS
-   ========================================================================== */
+/* Inputs, selects, textareas */
 .form-container input[type="text"],
 .form-container input[type="password"],
 .form-container input[type="email"],
 .form-container input[type="datetime-local"],
 .form-container input[type="date"],
+.form-container input[type="url"],
 .form-container select,
 .form-container textarea {
   width: 100%;
@@ -70,7 +51,6 @@
   font-size: var(--font-reg);
   box-sizing: border-box;
 }
-
 .form-container input:focus,
 .form-container select:focus,
 .form-container textarea:focus {
@@ -79,11 +59,29 @@
   box-shadow: 0 0 0 2px rgba(255,255,255,0.15);
 }
 
+/* Hide the real file input */
+.form-container input[type="file"] {
+  display: none;
+}
 
-/* ==========================================================================
-   5. BUTTON BASES
-   (You have global .btn styles; these scoped rules tweak spacing in forms.)
-   ========================================================================== */
+/* Hide Django’s default “Currently: … [ clear ]” block */
+.clearablefileinput {
+  display: none !important;
+}
+
+/* Selected filename style */
+.filename-display {
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--text-main);
+  margin-top: 0.25rem;
+}
+
+/* Inline remove button margin */
+#remove-avatar-btn {
+  margin: 0.5rem 0 1.5rem;
+}
+
 .form-container .btn {
   text-transform: uppercase;
   font-size: var(--font-reg);
@@ -91,7 +89,6 @@
   padding: 0.75rem 1.5rem;
   border-radius: var(--radius);
 }
-
 .form-container .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -103,7 +100,6 @@
   min-width: 8rem;
   text-align: center;
 }
-
 .form-container .btn.submit {
   background-color: var(--accent-primary);
   border-color: var(--accent-primary);
@@ -114,7 +110,6 @@
   border-color: var(--accent-orange);
   color: var(--bg-steel);
 }
-
 .form-container .btn.secondary {
   background-color: var(--bg-steel);
   border-color: var(--bg-steel);
@@ -125,7 +120,6 @@
   border-color: var(--accent-orange);
   color: var(--accent-orange);
 }
-
 .form-container .btn.danger {
   background-color: #B22222;
   border-color: #B22222;
@@ -135,97 +129,17 @@
   background-color: #8b1a1a;
   border-color: #8b1a1a;
 }
-
-
-/* ==========================================================================
-   6. ALT / BELOW-FORM LINK (e.g., “Already have an account?”)
-   ========================================================================== */
-.form-container .form-actions + .form-alt-link {
-  margin-top: 1.25rem;
-}
-
-.form-alt-link {
-  text-align: center;
-  font-size: var(--font-sm);
-  color: rgba(255,255,255,0.8);
-}
-.form-alt-link a {
-  color: var(--accent-primary);
-  text-decoration: underline;
-}
-.form-alt-link a:hover {
-  color: var(--accent-orange);
-}
-
-
-/* ==========================================================================
-   7. INLINE DELETE ROW (legacy — used when showing a DELETE checkbox)
-   Hide the raw checkbox; style the row as a danger action.
-   ========================================================================== */
-.form-container .delete-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  padding: 0.25rem;
-  border-radius: var(--radius);
-  transition: background 0.2s;
-}
-.form-container .delete-group:hover {
-  background: rgba(255,0,0,0.05);
-}
-.form-container input[type="checkbox"][name$="-DELETE"] {
-  display: none;
-}
-
-
-/* ==========================================================================
-   8. SMALL BUTTON VARIANT
-   ========================================================================== */
 .form-container .btn-sm {
   padding: 0.4rem 0.8rem;
   font-size: 1.2rem;
   border-width: 1px;
 }
 
-
-/* ==========================================================================
-   9. UTILITIES / LEGACY HELPERS
-   (Safe to remove if no longer needed.)
-   ========================================================================== */
-
-/* Inline form inside flex list items (used in older external account lists) */
-ul.flex.items-center li form {
-  margin-left: auto;
+p.clearablefileinput {
+  display: none !important;
 }
 
-
-/* ==========================================================================
-   10. SHARED EXTRAS (non-form elements that ended up here)
-   Consider moving these to a more global stylesheet later.
-   ========================================================================== */
-.rsvp-counts p {
-  font-size: var(--font-reg);
-  margin-bottom: 0.5rem;
-}
-
-.card-list {
-  list-style: none;
-  padding: 0;
-}
-.card-list li {
-  margin-bottom: 1rem;
-}
-.card-list li a {
-  display: block;
-  padding: 1rem;
-  background: var(--bg-steel);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: var(--radius);
-  text-decoration: none;
-  color: var(--text-main);
-  transition: box-shadow 0.2s ease;
-}
-.card-list li a:hover {
-  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+input[type="checkbox"][name$="-clear"], 
+label[for$="-clear_id"] {
+  display: none !important;
 }

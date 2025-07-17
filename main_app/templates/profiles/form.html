@@ -7,56 +7,53 @@
 {% endblock %}
 
 {% block content %}
-  <div class="form-container">
+<div class="form-container">
+  <h2>Edit Profile</h2>
 
-    <h2>Linked Accounts</h2>
-    {% if external_accounts %}
-      <ul>
-        {% for acct in external_accounts %}
-          <li class="flex items-center">
-            <strong>{{ acct.get_service_display }}:</strong>
-            {% if acct.url %}
-              <a href="{{ acct.url }}" target="_blank">
-                {{ acct.identifier }}
-              </a>
-            {% else %}
-              {{ acct.identifier }}
-            {% endif %}
-            <form
-              action="{% url 'external-delete' acct.pk %}"
-              method="post"
-              class="ml-auto"
-            >
-              {% csrf_token %}
-              <button type="submit" class="btn danger btn-sm">
-                Remove
-              </button>
-            </form>
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p><em>No linked accounts yet.</em></p>
-    {% endif %}
+  {# ──────────────────────────────────────────────────────────────── #}
+  {# 1) PROFILE UPDATE FORM (avatar + other fields + add‑account)    #}
+  {# ──────────────────────────────────────────────────────────────── #}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    {# ── AVATAR FIELD + INLINE REMOVE BUTTON ── #}
+    <div class="form-group file-group">
+      <label for="{{ form.avatar.id_for_label }}" class="btn secondary">
+        {% if form.instance.avatar %}Change Avatar{% else %}Choose Avatar{% endif %}
+      </label>
+      {{ form.avatar }}
+      {{ form.avatar.errors }}
+
+      <div id="avatar-filename" class="filename-display"></div>
+
+      {% if form.instance.avatar %}
+        <button type="button" id="remove-avatar-btn" class="btn submit btn-sm">
+          Remove Avatar
+        </button>
+      {% endif %}
+    </div>
 
     <hr>
 
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      {{ form.non_field_errors }}
-      <div class="form-group">
-        {{ form.avatar.label_tag }}
-        {{ form.avatar }}
-        {{ form.avatar.errors }}
-      </div>
-      {{ form.as_p }}
+    {# ── OTHER PROFILE FIELDS ── #}
+    {% for field in form %}
+      {% if field.name != 'avatar' %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {{ field }}
+          {{ field.errors }}
+        </div>
+      {% endif %}
+    {% endfor %}
 
-      <hr>
+    <hr>
 
-      <h2>Add a New External Account</h2>
-      {{ external_formset.management_form }}
-
-      {% for subform in external_formset.forms %}
+    {# ── INLINE “ADD NEW EXTERNAL ACCOUNT” ── #}
+    <h2 class="section-heading">Add a New External Account</h2>
+    {{ external_formset.management_form }}
+    {% for subform in external_formset.forms %}
+      {% if not subform.instance.pk %}
         {{ subform.non_field_errors }}
         <div class="form-group">
           {{ subform.service.label_tag }}
@@ -64,7 +61,7 @@
           {{ subform.service.errors }}
         </div>
         <div class="form-group">
-        <label for="{{ subform.identifier.id_for_label }}">Username</label>
+          <label for="{{ subform.identifier.id_for_label }}">Username</label>
           {{ subform.identifier }}
           {{ subform.identifier.errors }}
         </div>
@@ -73,14 +70,79 @@
           {{ subform.url }}
           {{ subform.url.errors }}
         </div>
-      {% endfor %}
+        <hr>
+      {% endif %}
+    {% endfor %}
 
-      <div class="form-actions">
-        <button type="submit" class="btn submit">Save Changes</button>
-        <a href="{% url 'profile-detail' %}" class="btn secondary">
-          Cancel
-        </a>
-      </div>
-    </form>
-  </div>
+    <div class="form-actions">
+      <button type="submit" class="btn submit">Save Changes</button>
+      <a href="{% url 'profile-detail' %}" class="btn secondary">Cancel</a>
+    </div>
+  </form>
+
+  <hr>
+
+  {# ──────────────────────────────────────────────────────────────── #}
+  {# 2) EXISTING LINKED ACCOUNTS (each remove in its own form)       #}
+  {# ──────────────────────────────────────────────────────────────── #}
+  <h2 class="section-heading">Linked Accounts</h2>
+  {% if external_accounts %}
+    <ul>
+      {% for acct in external_accounts %}
+        <li class="flex items-center">
+          <strong>{{ acct.get_service_display }}:</strong>
+          {% if acct.url %}
+            <a href="{{ acct.url }}" target="_blank">{{ acct.identifier }}</a>
+          {% else %}
+            {{ acct.identifier }}
+          {% endif %}
+          <form action="{% url 'external-delete' acct.pk %}" method="post" class="ml-auto">
+            {% csrf_token %}
+            <button type="submit" class="btn submit btn-sm">Remove</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p><em>No linked accounts yet.</em></p>
+  {% endif %}
+</div>
+
+{# ──────────────────────────────────────────────────────────────── #}
+{# 3) JS FOR FILENAME DISPLAY & AVATAR REMOVAL                     #}
+{# ──────────────────────────────────────────────────────────────── #}
+<script>
+function getCookie(name) {
+  let v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return v ? v.pop() : '';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // show selected filename
+  const fileInput = document.querySelector('.file-group input[type="file"]');
+  const display  = document.getElementById('avatar-filename');
+  if (fileInput && display) {
+    fileInput.addEventListener('change', () => {
+      const name = fileInput.files[0]?.name || '';
+      display.textContent = name ? `Selected file: ${name}` : '';
+    });
+  }
+
+  // remove avatar via AJAX POST then reload
+  const removeBtn = document.getElementById('remove-avatar-btn');
+  if (removeBtn) {
+    removeBtn.addEventListener('click', async () => {
+      const resp = await fetch("{% url 'remove-avatar' %}", {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+      });
+      if (resp.ok) {
+        window.location.reload();
+      } else {
+        alert('Could not remove avatar. Please try again.');
+      }
+    });
+  }
+});
+</script>
 {% endblock %}

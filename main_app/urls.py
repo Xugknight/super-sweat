@@ -12,6 +12,7 @@ urlpatterns = [
     path('profile/', views.ProfileDetail.as_view(), name='profile-detail'),
     path('profile/edit/', views.ProfileUpdate.as_view(), name='profile-edit'),
     path('profile/delete/', views.ProfileDelete.as_view(), name='profile-delete'),
+    path('profile/avatar/remove/', views.remove_avatar, name='remove-avatar'),
     path('profiles/<int:pk>/', views.ProfilePublicDetail.as_view(), name='profile-public'),
     path('profiles/external/<int:pk>/delete/', views.ExternalAccountDelete.as_view(), name='external-delete'),
 

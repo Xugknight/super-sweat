@@ -10,14 +10,10 @@
 <div class="form-container">
   <h2>Edit Profile</h2>
 
-  {# ──────────────────────────────────────────────────────────────── #}
-  {# 1) PROFILE UPDATE FORM (avatar + other fields + add‑account)    #}
-  {# ──────────────────────────────────────────────────────────────── #}
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.non_field_errors }}
 
-    {# ── AVATAR FIELD + INLINE REMOVE BUTTON ── #}
     <div class="form-group file-group">
       <label for="{{ form.avatar.id_for_label }}" class="btn secondary">
         {% if form.instance.avatar %}Change Avatar{% else %}Choose Avatar{% endif %}
@@ -36,7 +32,6 @@
 
     <hr>
 
-    {# ── OTHER PROFILE FIELDS ── #}
     {% for field in form %}
       {% if field.name != 'avatar' %}
         <div class="form-group">
@@ -49,7 +44,6 @@
 
     <hr>
 
-    {# ── INLINE “ADD NEW EXTERNAL ACCOUNT” ── #}
     <h2 class="section-heading">Add a New External Account</h2>
     {{ external_formset.management_form }}
     {% for subform in external_formset.forms %}
@@ -82,9 +76,6 @@
 
   <hr>
 
-  {# ──────────────────────────────────────────────────────────────── #}
-  {# 2) EXISTING LINKED ACCOUNTS (each remove in its own form)       #}
-  {# ──────────────────────────────────────────────────────────────── #}
   <h2 class="section-heading">Linked Accounts</h2>
   {% if external_accounts %}
     <ul>
@@ -108,9 +99,6 @@
   {% endif %}
 </div>
 
-{# ──────────────────────────────────────────────────────────────── #}
-{# 3) JS FOR FILENAME DISPLAY & AVATAR REMOVAL                     #}
-{# ──────────────────────────────────────────────────────────────── #}
 <script>
 function getCookie(name) {
   let v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
@@ -118,7 +106,6 @@ function getCookie(name) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // show selected filename
   const fileInput = document.querySelector('.file-group input[type="file"]');
   const display  = document.getElementById('avatar-filename');
   if (fileInput && display) {
@@ -128,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // remove avatar via AJAX POST then reload
   const removeBtn = document.getElementById('remove-avatar-btn');
   if (removeBtn) {
     removeBtn.addEventListener('click', async () => {

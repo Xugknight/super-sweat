@@ -32,7 +32,6 @@
   font-weight: 600;
 }
 
-/* Inputs, selects, textareas */
 .form-container input[type="text"],
 .form-container input[type="password"],
 .form-container input[type="email"],
@@ -59,17 +58,14 @@
   box-shadow: 0 0 0 2px rgba(255,255,255,0.15);
 }
 
-/* Hide the real file input */
 .form-container input[type="file"] {
   display: none;
 }
 
-/* Hide Django’s default “Currently: … [ clear ]” block */
 .clearablefileinput {
   display: none !important;
 }
 
-/* Selected filename style */
 .filename-display {
   font-style: italic;
   font-size: 1.2rem;
@@ -77,7 +73,6 @@
   margin-top: 0.25rem;
 }
 
-/* Inline remove button margin */
 #remove-avatar-btn {
   margin: 0.5rem 0 1.5rem;
 }

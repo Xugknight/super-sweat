@@ -52,9 +52,6 @@ def signup(request):
         form = UserCreationForm()
     return render(request, 'registration/signup.html', {'form': form, 'error': error})
 
-def about(request):
-    return render(request, 'about.html')
-
 class ProfileDetail(LoginRequiredMixin, DetailView):
     model = Profile
     template_name = 'profiles/detail.html'

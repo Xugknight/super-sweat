@@ -46,7 +46,6 @@
   margin-bottom: 2.5rem;
 }
 
-/* Responsive grid of feature cards */
 .feature-grid {
   display: grid;
   gap: 2rem;

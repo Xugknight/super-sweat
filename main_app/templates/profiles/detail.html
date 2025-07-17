@@ -11,7 +11,6 @@
 
 <div class="profile-detail">
 
-  <!-- Header / Avatar / Actions -->
   <header class="profile-header card">
     <div class="profile-header-main">
       {% if prof.avatar %}
@@ -40,7 +39,6 @@
     {% endif %}
   </header>
 
-  <!-- Basics -->
   <section class="profile-basics card">
     <h2>Basics</h2>
     <dl class="profile-basics-list">
@@ -59,7 +57,6 @@
     </dl>
   </section>
 
-  <!-- External / Linked Accounts -->
   <section class="profile-accounts card">
     <h2>Linked Accounts</h2>
     {% with accounts=prof.external_accounts.all %}
@@ -82,7 +79,6 @@
     {% endwith %}
   </section>
 
-  <!-- Guild Memberships -->
   <section class="profile-guilds card">
     <h2>Guilds</h2>
     {% with guild_list=prof.guilds.all %}

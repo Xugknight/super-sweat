@@ -1,6 +1,6 @@
 /* ==========================================================================
-   1. RESET & BOX-SIZING
-   ========================================================================== */
+1. RESET & BOX-SIZING
+========================================================================== */
 html {
   box-sizing: border-box;
   font-size: 62.5%;
@@ -12,8 +12,8 @@ html {
 }
 
 /* ==========================================================================
-   2. CSS VARIABLES — Vintage Gaming Palette
-   ========================================================================== */
+2. CSS VARIABLES — Vintage Gaming Palette
+========================================================================== */
 :root {
   --bg-charcoal:   #2E2E2E;
   --bg-steel:      #1C1C1C;
@@ -31,8 +31,8 @@ html {
 }
 
 /* ==========================================================================
-   3. GLOBAL STYLES
-   ========================================================================== */
+3. GLOBAL STYLES
+========================================================================== */
 body {
   background-color: var(--bg-charcoal);
   color: var(--text-main);
@@ -42,7 +42,6 @@ body {
   align-items: center;
   min-height: 100vh;
 }
-
 a {
   color: var(--text-main);
   text-decoration: none;
@@ -54,26 +53,60 @@ a:focus {
   color: var(--accent-orange);
   outline: none;
 }
-
 ul {
   list-style: none;
 }
 
 /* ==========================================================================
-   4. SITE HEADER & NAVIGATION
-   ========================================================================== */
-.site-header {
+4. HEADER & NAVIGATION
+========================================================================== */
+header {
   width: 100%;
-  background-color: var(--accent-primary);
+  background-color: var(--accent-primary);        
   border-bottom: 2px solid var(--accent-orange);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1rem 2rem;
-  gap: 2rem;
 }
 
-/* Logo */
+nav ul {
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+}
+
+nav a.nav-link,
+header nav #logout-form button.nav-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  font-size: var(--font-reg);
+  line-height: 1;                      
+  font-weight: 700;
+  margin: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--text-main);
+  border-radius: var(--radius);
+  background-color: var(--bg-steel);
+  color: var(--text-main);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+nav a.nav-link:hover,
+header nav #logout-form button.nav-link-button:hover {
+  background-color: var(--text-main);              
+  color: var(--bg-charcoal);                       
+}
+
+/* ==========================================================================
+5. LOGO
+========================================================================== */
 .header-logo-container {
   max-width: 60px;
 }
@@ -83,71 +116,9 @@ ul {
   display: block;
 }
 
-/* Main Nav */
-.main-nav {
-  display: flex;
-  align-items: center;
-}
-.main-nav .nav-list {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  flex-wrap: wrap;
-}
-
-/* Shared link/button look */
-.nav-link,
-.nav-link-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.6rem 1.4rem;
-  font-size: var(--font-reg);
-  font-weight: 600;
-  line-height: 1.2;
-  text-transform: uppercase;
-  border: 1px solid var(--accent-orange);
-  border-radius: var(--radius);
-  background-color: rgba(255,255,255,0.05);
-  color: var(--text-main);
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
-}
-.nav-link:hover,
-.nav-link:focus,
-.nav-link-button:hover,
-.nav-link-button:focus {
-  background-color: rgba(200,109,49,0.25);
-  color: var(--accent-orange);
-  transform: translateY(-1px);
-}
-
-/* Use on <a> links that are primary CTAs (e.g., Sign Up when logged out) */
-.nav-cta {
-  border-color: var(--accent-primary);
-  background-color: rgba(159,43,29,0.25);
-}
-.nav-cta:hover,
-.nav-cta:focus {
-  background-color: var(--accent-orange);
-  color: var(--bg-steel);
-}
-
-/* Remove default button styles for logout form button */
-#logout-form {
-  margin: 0;
-  padding: 0;
-  display: inline;
-}
-#logout-form button {
-  font-family: inherit;
-  /* We apply visual style via .nav-link-button class above */
-}
-
-
 /* ==========================================================================
-   5. MAIN CONTENT WRAPPER
-   ========================================================================== */
+6. MAIN
+========================================================================== */
 main {
   width: 100%;
   max-width: 1200px;
@@ -156,8 +127,8 @@ main {
 }
 
 /* ==========================================================================
-   6. TYPOGRAPHY
-   ========================================================================== */
+7. TYPOGRAPHY
+========================================================================== */
 h1, h2, h3 {
   font-family: 'Press Start 2P', monospace;
   color: var(--text-headline);
@@ -166,15 +137,14 @@ h1, h2, h3 {
 h1 { font-size: var(--font-xxl); margin-bottom: 2rem; }
 h2 { font-size: var(--font-xl); margin-bottom: 1.5rem; }
 h3 { font-size: var(--font-l); margin-bottom: 1rem; }
-
 p, li {
   font-size: var(--font-reg);
   line-height: 1.7;
 }
 
 /* ==========================================================================
-   7. GENERIC BUTTONS (shared across app — forms, CTAs)
-   ========================================================================== */
+8. BUTTONS & FORMS
+========================================================================== */
 .btn {
   display: inline-block;
   padding: 1rem 2rem;
@@ -198,16 +168,14 @@ p, li {
 .btn + .btn {
   margin-left: 1rem;
 }
-
-/* contextual borders */
-.submit    { border-color: var(--accent-primary); }
-.warn      { border-color: var(--accent-orange); }
-.danger    { border-color: #B22222; }
+.submit { border-color: var(--accent-primary); }
+.warn   { border-color: var(--accent-orange); }
+.danger { border-color: #B22222; }
 .secondary { border-color: var(--bg-steel); }
 
 /* ==========================================================================
-   8. CARD COMPONENT
-   ========================================================================== */
+9. CARDS
+========================================================================== */
 .card {
   background-color: var(--bg-steel);
   border: 1px solid rgba(255,255,255,0.1);
@@ -218,22 +186,20 @@ p, li {
   box-shadow: inset 0 0 0 2px var(--accent-primary);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.card:hover,
-.card:focus-within {
+.card:hover {
   transform: translateY(-4px);
   box-shadow: inset 0 0 0 2px var(--accent-orange);
 }
 
 /* ==========================================================================
-   9. PAGE SECTIONS
-   ========================================================================== */
+10. SECTIONS
+========================================================================== */
 .page-header h1 {
   font-size: var(--font-xl);
   border-bottom: 2px solid var(--accent-primary);
   padding-bottom: 1rem;
   margin-bottom: 2rem;
 }
-
 section h2 {
   font-size: var(--font-l);
   color: var(--text-headline);
@@ -241,14 +207,13 @@ section h2 {
 }
 
 /* ==========================================================================
-   10. MEDIA QUERIES
-   ========================================================================== */
+11. MEDIA QUERIES
+========================================================================== */
 @media (min-width: 768px) {
   .page-header h1 { font-size: var(--font-xtreme); }
 }
-
 @media (min-width: 1024px) {
-  .site-header {
+  header {
     position: sticky;
     top: 0;
     z-index: 999;
@@ -257,8 +222,8 @@ section h2 {
 }
 
 /* ==========================================================================
-   11. UTILITIES (shared across the app)
-   ========================================================================== */
+12. UTILITIES
+========================================================================== */
 .empty {
   color: rgba(255,255,255,0.6);
   font-style: italic;

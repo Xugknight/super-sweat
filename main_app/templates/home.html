@@ -14,15 +14,12 @@
 {% if user.is_authenticated %}
   <div class="dashboard">
 
-    <!-- Welcome Header -->
     <header class="card dash-header">
       <h1>Welcome back, {{ user.profile.display_name }}!</h1>
     </header>
 
-    <!-- Two‑column: Your Guilds + Upcoming Events -->
     <div class="dash-two-col">
 
-      <!-- Your Guilds -->
       <section class="card dash-section">
         <h2>Your Guilds</h2>
         {% if my_guilds %}
@@ -38,7 +35,6 @@
         {% endif %}
       </section>
 
-      <!-- Upcoming Events -->
       <section class="card dash-section">
         <h2>Upcoming Events</h2>
         {% if upcoming_events %}
@@ -61,10 +57,8 @@
   </div>
 
 {% else %}
-  <!-- ====== LANDING PAGE ====== -->
   <div class="landing">
 
-    <!-- Hero / CTA -->
     <section class="landing-hero card">
       <h1>Manage Your Gaming Guilds</h1>
       <p>Organize raids, track members, and communicate — all in one place.</p>
@@ -74,7 +68,6 @@
       </div>
     </section>
 
-    <!-- Feature Grid -->
     <section id="features" class="landing-features">
       <h2>Why Use Super Sweat?</h2>
       <div class="feature-grid">

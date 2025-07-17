@@ -44,7 +44,7 @@
 }
 
 .form-container .form-group label {
-  font-size: var(--font-l);           /* bump size for readability */
+  font-size: var(--font-l);           
   color: var(--text-headline);
   font-weight: 600;
 }
@@ -92,7 +92,6 @@
   border-radius: var(--radius);
 }
 
-/* Action bar (submit / cancel row) */
 .form-container .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -105,7 +104,6 @@
   text-align: center;
 }
 
-/* Primary */
 .form-container .btn.submit {
   background-color: var(--accent-primary);
   border-color: var(--accent-primary);
@@ -117,7 +115,6 @@
   color: var(--bg-steel);
 }
 
-/* Secondary */
 .form-container .btn.secondary {
   background-color: var(--bg-steel);
   border-color: var(--bg-steel);
@@ -129,7 +126,6 @@
   color: var(--accent-orange);
 }
 
-/* Danger */
 .form-container .btn.danger {
   background-color: #B22222;
   border-color: #B22222;

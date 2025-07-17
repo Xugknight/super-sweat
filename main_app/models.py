@@ -6,6 +6,7 @@ from django.utils import timezone
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     display_name = models.CharField(max_length=100)
     rank = models.CharField(max_length=50, blank=True)
     main_game = models.CharField(max_length=100, blank=True)

@@ -82,11 +82,11 @@ class ProfileUpdate(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save()
         formset = self.get_context_data()['external_formset']
-        if formset.is_valid():
+        if formset and formset.is_valid():
             formset.instance = self.object
             formset.save()
-            return redirect('profile-detail')
-        return self.form_invalid(form)
+        return redirect('profile-detail')
+        # return self.form_invalid(form)
 
 class ProfileDelete(LoginRequiredMixin, DeleteView):
     model = Profile
@@ -117,6 +117,16 @@ class ExternalAccountDelete(LoginRequiredMixin, View):
             return HttpResponseForbidden("You can't delete that.")
         acct.delete()
         return redirect('profile-detail')
+    
+@login_required
+def remove_avatar(request):
+    if request.method == 'POST':
+        profile = request.user.profile
+        if profile.avatar:
+            profile.avatar.delete(save=False)
+        profile.avatar = None
+        profile.save()
+    return redirect('profile-edit')
 
 class GuildList(LoginRequiredMixin, ListView):
     model = Guild

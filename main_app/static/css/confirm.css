@@ -11,7 +11,6 @@
   gap: 2rem;
 }
 
-/* Uses global .card from base.css; we just tweak spacing */
 .confirm-card {
   padding: 3rem 2rem;
 }
@@ -45,7 +44,6 @@
   text-transform: uppercase;
 }
 
-/* Optional small meta lines about the thing being deleted */
 .confirm-meta {
   margin-top: 1rem;
   font-size: var(--font-sm, 1.2rem);
@@ -53,7 +51,6 @@
   line-height: 1.4;
 }
 
-/* Action buttons */
 .confirm-actions {
   display: flex;
   justify-content: center;

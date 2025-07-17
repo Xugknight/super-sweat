@@ -5,17 +5,17 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="shortcut icon"
-      type="image/png"
-      href="{% static 'images/logo3.svg' %}"
-    />
+
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/logo3.svg' %}" />
+
+    {# Global base styles #}
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+
     <title>Super Sweat</title>
-    {% block head %} {% endblock %}
+    {% block head %}{% endblock %}
   </head>
   <body>
-    <header>
+    <header class="site-header">
       <div class="header-logo-container">
         <a href="{% url 'home' %}">
           <img
@@ -24,26 +24,42 @@
           />
         </a>
       </div>
-      <nav>
-        <ul>
+
+      <nav class="main-nav" aria-label="Primary">
+        <ul class="nav-list">
           {% if user.is_authenticated %}
-          <li><a href="{% url 'guild-list' %}">Guilds</a></li>
-          <li><a href="{% url 'about' %}">About</a></li>
-          <li><a href="{% url 'profile-detail' %}">Profile</a></li>
-          <li>
-            <form id="logout-form" method="post" action="{% url 'logout' %}">
-              {% csrf_token %}
-              <button type="submit">Log out</button>
-            </form>
-          </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'guild-list' %}">Guilds</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'about' %}">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'profile-detail' %}">Profile</a>
+            </li>
+            <li class="nav-item">
+              <form id="logout-form" method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="nav-link nav-link-button">Log Out</button>
+              </form>
+            </li>
           {% else %}
-          <li><a href="{% url 'about' %}">About</a></li>
-          <li><a href="{% url 'login' %}">Login</a></li>
-          <li><a href="{% url 'signup' %}">Sign up</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'about' %}">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">Log In</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+            </li>
           {% endif %}
         </ul>
       </nav>
     </header>
-    <main>{% block content %} {% endblock %}</main>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
   </body>
 </html>

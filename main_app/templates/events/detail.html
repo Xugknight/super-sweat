@@ -3,11 +3,12 @@
 
 {% block head %}
   {{ block.super }}
+  {# Using form.css for button + layout harmony; add an events/detail.css later if desired #}
   <link rel="stylesheet" href="{% static 'css/form.css' %}">
 {% endblock %}
 
 {% block content %}
-<main class="card">
+<main class="card event-detail-card">
   <h1>{{ event.title }}</h1>
 
   <p><strong>When:</strong>
@@ -20,6 +21,10 @@
     {{ event.description|default:"No description provided." }}
   </p>
 
+  {% if event.required_roles %}
+    <p><strong>Roles Needed:</strong> {{ event.required_roles }}</p>
+  {% endif %}
+
   <hr>
 
   <div class="rsvp-counts">
@@ -30,6 +35,7 @@
 
   <hr>
 
+  {# RSVP quick buttons #}
   <form method="post" action="{% url 'rsvp' event.pk %}">
     {% csrf_token %}
     <button
@@ -57,11 +63,9 @@
   {% if can_manage_events %}
     <hr>
     <div class="form-actions">
-      <a href="{% url 'event-update' event.pk %}" class="btn">Edit</a>
-      <form method="post" action="{% url 'event-delete' event.pk %}" style="display:inline">
-        {% csrf_token %}
-        <button type="submit" class="btn danger">Delete</button>
-      </form>
+      <a href="{% url 'event-update' event.pk %}" class="btn secondary">Edit</a>
+      {# Route to confirm delete page instead of inline POST #}
+      <a href="{% url 'event-delete' event.pk %}" class="btn danger">Delete</a>
     </div>
   {% endif %}
 

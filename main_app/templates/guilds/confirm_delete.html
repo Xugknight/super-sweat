@@ -1,15 +1,38 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/confirm.css' %}">
+{% endblock %}
 
 {% block content %}
-  <div class="page-header">
+<div class="confirm-wrapper">
+  <div class="card confirm-card">
+
+    <div class="confirm-icon">⚠️</div>
     <h1>Delete Guild?</h1>
+
+    <p class="confirm-message">
+      Deleting this guild will remove all of its events and membership records.
+      This action cannot be undone.
+    </p>
+
+    <div class="confirm-object">{{ object.name }}</div>
+
+    <p class="confirm-meta">
+      Owner: {{ object.owner.display_name }}<br>
+      Created: {{ object.created_at|date:"M d, Y" }}<br>
+      Members: {{ object.membership_set.count }}
+    </p>
+
+    <div class="confirm-actions">
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn danger">Delete Guild</button>
+      </form>
+      <a href="{% url 'guild-detail' object.pk %}" class="btn secondary">Cancel</a>
+    </div>
+
   </div>
-
-  <p>Are you sure you want to delete the guild <strong>{{ object.name }}</strong>?</p>
-
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn danger">Yes, delete</button>
-    <a href="{% url 'guild-detail' object.pk %}" class="btn secondary">Cancel</a>
-  </form>
+</div>
 {% endblock %}

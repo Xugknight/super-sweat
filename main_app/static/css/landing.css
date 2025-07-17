@@ -1,0 +1,86 @@
+/* ==========================================================================
+   LANDING PAGE
+   Augments base.css (uses its variables, .card, .btn, typography)
+   ========================================================================== */
+
+.landing {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding: 1rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+.landing-hero {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+.landing-hero h1 {
+  margin-bottom: 2rem;
+  font-size: var(--font-xxl);
+}
+.landing-hero p {
+  max-width: 60ch;
+  margin: 0 auto 2.5rem;
+  font-size: var(--font-reg);
+  line-height: 1.8;
+}
+.landing-cta-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* --------------------------------------------------------------------------
+   Features
+   -------------------------------------------------------------------------- */
+.landing-features {
+  text-align: center;
+}
+.landing-features h2 {
+  margin-bottom: 2.5rem;
+}
+
+/* Responsive grid of feature cards */
+.feature-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr;
+}
+.feature-card {
+  text-align: left;
+  padding: 2.5rem;
+}
+.feature-card h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: var(--font-l);
+}
+.feature-card p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   Small screen tweaks
+   -------------------------------------------------------------------------- */
+@media (max-width: 600px) {
+  .landing-hero {
+    padding: 3rem 1.5rem;
+  }
+  .landing-hero h1 {
+    font-size: var(--font-xl);
+    margin-bottom: 1.5rem;
+  }
+  .landing-hero p {
+    margin-bottom: 2rem;
+  }
+  .feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,38 +1,106 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}My Profile{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/profiles/detail.css' %}">
+{% endblock %}
 
 {% block content %}
-  <h1>{{ object.display_name }}</h1>
-  <p><strong>Username:</strong> {{ object.user.username }}</p>
-  <p><strong>Rank:</strong> {{ object.rank|default:"n/a" }}</p>
-  <p><strong>Main Game:</strong> {{ object.main_game|default:"n/a" }}</p>
-  <p><strong>Preferred Roles:</strong> {{ object.preferred_roles|default:"n/a" }}</p>
+{# Normalize: work with `prof` whether context gives `profile` or `object` #}
+{% with prof=profile|default:object %}
 
-  {% if object.avatar %}
-    <img src="{{ object.avatar.url }}" alt="Avatar" width="150">
-  {% endif %}
+<div class="profile-detail">
 
-  <h2>Linked Accounts</h2>
-  <ul class="external-accounts">
-    {% for acct in object.external_accounts.all %}
-      <li>
-        <strong>{{ acct.get_service_display }}:</strong>
-        {% if acct.url %}
-          <a href="{{ acct.url }}" target="_blank">{{ acct.identifier }}</a>
-        {% else %}
-          {{ acct.identifier }}
+  <!-- Header / Avatar / Actions -->
+  <header class="profile-header card">
+    <div class="profile-header-main">
+      {% if prof.avatar %}
+        <img src="{{ prof.avatar.url }}" alt="{{ prof.display_name }} avatar" class="profile-avatar">
+      {% else %}
+        <div class="profile-avatar placeholder">{{ prof.display_name|first|upper }}</div>
+      {% endif %}
+      <div class="profile-header-text">
+        <h1 class="profile-name">{{ prof.display_name }}</h1>
+        <p class="profile-username">@{{ prof.user.username }}</p>
+        {% if prof.get_status_display %}
+          <span class="status-badge">{{ prof.get_status_display }}</span>
         {% endif %}
-      </li>
-    {% empty %}
-      <li><em>No external accounts linked yet.</em></li>
-    {% endfor %}
-  </ul>
+      </div>
+    </div>
 
-  <p><strong>Status:</strong> {{ object.get_status_display }}</p>
+    {# Actions: only when viewing own profile #}
+    {% if request.user.is_authenticated %}
+      {% if request.user.profile == prof %}
+        <div class="profile-header-actions">
+          <a href="{% url 'profile-edit' %}" class="btn secondary">Edit</a>
+          {# NOTE: no JS confirm — go to confirm_delete view #}
+          <a href="{% url 'profile-delete' %}" class="btn danger">Delete</a>
+        </div>
+      {% endif %}
+    {% endif %}
+  </header>
 
-  <p>
-    <a href="{% url 'profile-edit' %}" class="btn warn">Edit Profile</a>
-    <a href="{% url 'profile-delete' %}" class="btn danger">Delete Profile</a>
-  </p>
+  <!-- Basics -->
+  <section class="profile-basics card">
+    <h2>Basics</h2>
+    <dl class="profile-basics-list">
+      <div>
+        <dt>Rank</dt>
+        <dd>{{ prof.rank|default:"n/a" }}</dd>
+      </div>
+      <div>
+        <dt>Main Game</dt>
+        <dd>{{ prof.main_game|default:"n/a" }}</dd>
+      </div>
+      <div>
+        <dt>Preferred Roles</dt>
+        <dd>{{ prof.preferred_roles|default:"n/a" }}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- External / Linked Accounts -->
+  <section class="profile-accounts card">
+    <h2>Linked Accounts</h2>
+    {% with accounts=prof.external_accounts.all %}
+      {% if accounts %}
+        <ul class="external-accounts-list">
+          {% for acct in accounts %}
+            <li>
+              <span class="external-service">{{ acct.get_service_display }}:</span>
+              {% if acct.url %}
+                <a href="{{ acct.url }}" target="_blank" rel="noopener">{{ acct.identifier }}</a>
+              {% else %}
+                {{ acct.identifier }}
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="empty">No external accounts linked yet.</p>
+      {% endif %}
+    {% endwith %}
+  </section>
+
+  <!-- Guild Memberships -->
+  <section class="profile-guilds card">
+    <h2>Guilds</h2>
+    {% with guild_list=prof.guilds.all %}
+      {% if guild_list %}
+        <ul class="guilds-list">
+          {% for g in guild_list %}
+            <li>
+              <a href="{% url 'guild-detail' g.pk %}">{{ g.name }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="empty">Not in any guilds yet.</p>
+      {% endif %}
+    {% endwith %}
+  </section>
+
+</div>
+
+{% endwith %}
 {% endblock %}

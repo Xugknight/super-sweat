@@ -11,6 +11,7 @@ class ProfileForm(forms.ModelForm):
             'main_game',
             'preferred_roles',
             'status',
+            'avatar',
         ]
         widgets = {
             'preferred_roles': forms.TextInput(attrs={'placeholder': 'e.g. DPS,Healer'}),

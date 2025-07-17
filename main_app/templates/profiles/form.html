@@ -44,6 +44,11 @@
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       {{ form.non_field_errors }}
+      <div class="form-group">
+        {{ form.avatar.label_tag }}
+        {{ form.avatar }}
+        {{ form.avatar.errors }}
+      </div>
       {{ form.as_p }}
 
       <hr>

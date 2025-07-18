@@ -48,4 +48,5 @@ Super Sweat is a sleek, Django‑powered web app designed for gaming communities
 - Improved mobile accessibility & touch support  
 - In‑app notifications & reminders  
 - Enhanced graphic detailing & themes  
-- Expanded catalog of event templates & roles 
+- Expanded catalog of event templates & roles
+- Invite, approve, and track every member’s activity.

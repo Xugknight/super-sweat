@@ -2,6 +2,8 @@
 
 Super Sweat is a sleek, Django‑powered web app designed for gaming communities to effortlessly build and manage guilds. Members can join or leave guilds, take on custom roles (Leader, Officer, Member, etc.), and RSVP to scheduled events—all through an intuitive interface. Profile avatars, external account linking, and reusable event templates keep everything organized and tailored to your group’s needs.
 
+---
+
 ## 🎖️ App Features
 - Member Management (join, leave, approve/reject)  
 - Custom Role System (Leader, Officer, Member, Recruit, Trial)  
@@ -11,30 +13,20 @@ Super Sweat is a sleek, Django‑powered web app designed for gaming communities
 
 ## 🛠️ Implemented Technologies
 
-- **Web Framework:** Django 5.2.3  
-- **Database:** PostgreSQL  
-- **Env Management:** django‑environ (reads `.env`)  
-- **Deployment Helper:** django‑on‑heroku  
-- **Authentication:** Django's built‑in `django.contrib.auth`  
-- **ORM & Migrations:** Django ORM  
-- **Templates:** Django template language (HTML5)  
-- **Interactivity:** Vanilla JavaScript (ES6)  
-- **Static & Media:** Django staticfiles + user‑uploaded media (avatars)  
-- **Forms:** Django ModelForms + inline formsets  
+- Django 5.2.3  
+- PostgreSQL  
+- Python  
+- JavaScript
+- CSS  
 
 ### 🚀 Deployment
 - Heroku  
 - GitHub  
 
-### 💻 Coding
-- Python  
-- JavaScript (An itty-bitty amount) 
-- CSS  
+---
 
-### 🎨 Styling
-- CSS (CSS Variables, responsive media queries)  
-
-[Manage Your Guild](https://super-sweat-587284064cdd.herokuapp.com/)
+### Try it out!
+[Super-Sweat!](https://super-sweat-587284064cdd.herokuapp.com/)
 
 ---
 
@@ -45,6 +37,7 @@ Super Sweat is a sleek, Django‑powered web app designed for gaming communities
 ---
 
 #### Later Site Additions may include:
+- Invite links for members to more easily invite friends
 - Improved mobile accessibility & touch support  
 - In‑app notifications & reminders  
 - Enhanced graphic detailing & themes  
